@@ -353,23 +353,10 @@
             theme: 'teal',
             activeContactId: 'global-chat',
             pendingMedia: null,
-            contacts: [
-                { id: 'contact_alex', name: 'Alex Rivers', avatarBg: 'bg-indigo-600', isOnline: true },
-                { id: 'contact_sarah', name: 'Sarah Jenkins', avatarBg: 'bg-pink-600', isOnline: false },
-                { id: 'contact_dave', name: 'Dave Vance', avatarBg: 'bg-amber-600', isOnline: true }
-            ],
+            contacts: [],
             chats: {
                 'global-chat': [
-                    { id: 'g1', sender: 'system', senderName: 'Network Broadcast', text: 'Welcome to Nexus Network! Send messages, attachments, or search contacts securely.', time: '12:00 PM', reactions: ['🔥'] }
-                ],
-                'contact_alex': [
-                    { id: 'a1', sender: 'contact', senderName: 'Alex Rivers', text: 'Hey there! Ready for the project sync?', time: '11:30 AM', reactions: [] }
-                ],
-                'contact_sarah': [
-                    { id: 's1', sender: 'contact', senderName: 'Sarah Jenkins', text: 'I uploaded the document to shared folder.', time: 'Yesterday', reactions: ['👍'] }
-                ],
-                'contact_dave': [
-                    { id: 'd1', sender: 'contact', senderName: 'Dave Vance', text: 'Ping me when you are online.', time: 'Yesterday', reactions: [] }
+                    { id: 'g1', sender: 'system', senderName: 'Network Broadcast', text: 'Welcome to Nexus Network! Send secure messages or add any contact instantly.', time: '12:00 PM', reactions: ['🔥'] }
                 ]
             }
         };
@@ -529,23 +516,29 @@
             );
 
             if (filtered.length === 0 && trimmedFilter) {
-                const noFoundNotice = document.createElement('div');
-                noFoundNotice.className = 'p-6 text-center text-xs text-slate-400 flex flex-col items-center justify-center space-y-2';
-                noFoundNotice.innerHTML = `
-                    <div class="w-10 h-10 rounded-full bg-slate-800/80 flex items-center justify-center text-slate-400">
-                        <i class="fa-solid fa-user-slash text-base"></i>
-                    </div>
-                    <p class="font-medium text-slate-300">No contact found</p>
-                    <p class="text-[11px] text-slate-500">No matching contact or ID found</p>
+                const createQuickDiv = document.createElement('div');
+                createQuickDiv.className = 'p-3 rounded-xl bg-teal-600/10 border border-teal-500/30 text-center cursor-pointer hover:bg-teal-600/20 transition space-y-1';
+                createQuickDiv.onclick = () => {
+                    addNewContactDirect(trimmedFilter);
+                };
+                createQuickDiv.innerHTML = `
+                    <p class="text-xs font-semibold text-teal-400"><i class="fa-solid fa-user-plus mr-1"></i> Add "${escapeHtml(trimmedFilter)}" as Contact</p>
+                    <p class="text-[10px] text-slate-400">Click to instantly create and start messaging</p>
                 `;
-                container.appendChild(noFoundNotice);
+                container.appendChild(createQuickDiv);
                 return;
             }
 
             if (state.contacts.length === 0 && !trimmedFilter) {
                 const emptyNotice = document.createElement('div');
-                emptyNotice.className = 'p-4 text-center text-xs text-slate-500 italic';
-                emptyNotice.innerText = 'No personal contacts added yet. Click + to add.';
+                emptyNotice.className = 'p-6 text-center text-xs text-slate-400 flex flex-col items-center justify-center space-y-2';
+                emptyNotice.innerHTML = `
+                    <div class="w-10 h-10 rounded-full bg-slate-800/80 flex items-center justify-center text-slate-400">
+                        <i class="fa-solid fa-address-book text-base"></i>
+                    </div>
+                    <p class="font-medium text-slate-300">No contacts yet</p>
+                    <p class="text-[11px] text-slate-500">Click the + icon above to add any contact</p>
+                `;
                 container.appendChild(emptyNotice);
                 return;
             }
@@ -762,8 +755,8 @@
             const newMsg = {
                 id: msgId,
                 sender: 'user',
-                senderId: state.user.id,
-                senderName: state.user.name,
+                senderId: state.user?.id || 'user_local',
+                senderName: state.user?.name || 'User',
                 receiverId: state.activeContactId,
                 text: text,
                 media: state.pendingMedia ? { ...state.pendingMedia } : null,
@@ -783,167 +776,31 @@
             renderContacts(document.getElementById('contact-search')?.value || '');
         }
 
-        function openMessageContextMenu(e, msgId) {
-            e.preventDefault();
-            activeContextMessageId = msgId;
-            closeContextMenus();
-            const menu = document.getElementById('message-context-menu');
-            menu.style.left = `${Math.min(e.clientX, window.innerWidth - 230)}px`;
-            menu.style.top = `${Math.min(e.clientY, window.innerHeight - 180)}px`;
-            menu.classList.remove('hidden');
-        }
+        function addNewContactDirect(contactName) {
+            const name = contactName.trim();
+            if (!name) return;
+            const id = 'contact_' + name.toLowerCase().replace(/[^a-z0-9_]/g, '_');
 
-        function openContactContextMenu(e, contactId) {
-            e.preventDefault();
-            activeContextContactId = contactId;
-            closeContextMenus();
-            const menu = document.getElementById('contact-context-menu');
-            menu.style.left = `${Math.min(e.clientX, window.innerWidth - 220)}px`;
-            menu.style.top = `${Math.min(e.clientY, window.innerHeight - 120)}px`;
-            menu.classList.remove('hidden');
-        }
-
-        function openContactContextMenuDirect(e, contactId) {
-            e.stopPropagation();
-            activeContextContactId = contactId;
-            closeContextMenus();
-            const menu = document.getElementById('contact-context-menu');
-            const rect = e.target.getBoundingClientRect();
-            menu.style.left = `${Math.min(rect.left, window.innerWidth - 220)}px`;
-            menu.style.top = `${Math.min(rect.bottom + 5, window.innerHeight - 120)}px`;
-            menu.classList.remove('hidden');
-        }
-
-        function closeContextMenus() {
-            document.getElementById('message-context-menu').classList.add('hidden');
-            document.getElementById('contact-context-menu').classList.add('hidden');
-        }
-        document.addEventListener('click', closeContextMenus);
-
-        function addQuickReaction(emoji) {
-            if (!activeContextMessageId) return;
-            const messages = state.chats[state.activeContactId] || [];
-            const msg = messages.find(m => m.id === activeContextMessageId);
-            if (msg) {
-                if (!msg.reactions) msg.reactions = [];
-                if (!msg.reactions.includes(emoji)) {
-                    msg.reactions.push(emoji);
-                    saveAppState();
-                    renderMessages();
-                }
+            if (!state.contacts.some(c => c.id === id)) {
+                const bgColors = ['bg-indigo-600', 'bg-pink-600', 'bg-teal-600', 'bg-amber-600', 'bg-purple-600'];
+                state.contacts.push({ 
+                    id, 
+                    name, 
+                    avatarBg: bgColors[Math.floor(Math.random() * bgColors.length)],
+                    isOnline: true
+                });
             }
-            closeContextMenus();
-        }
 
-        function copyContextMenuText() {
-            const messages = state.chats[state.activeContactId] || [];
-            const msg = messages.find(m => m.id === activeContextMessageId);
-            if (msg && msg.text) {
-                const ta = document.createElement('textarea');
-                ta.value = msg.text;
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-                showNotification('Copied', 'Message text copied to clipboard.');
+            if (!state.chats[id]) {
+                state.chats[id] = [];
             }
-            closeContextMenus();
-        }
 
-        function openForwardModal() {
-            closeContextMenus();
-            const list = document.getElementById('forward-targets-list');
-            list.innerHTML = '';
-
-            const gDiv = document.createElement('div');
-            gDiv.className = 'p-3 rounded-xl bg-slate-800/60 hover:bg-slate-700/60 cursor-pointer flex items-center justify-between transition';
-            gDiv.innerHTML = `<span class="text-sm font-medium text-white">🌍 Global Public Channel</span><i class="fa-solid fa-arrow-right text-teal-400"></i>`;
-            gDiv.onclick = () => executeForward('global-chat');
-            list.appendChild(gDiv);
-
-            state.contacts.forEach(c => {
-                const cDiv = document.createElement('div');
-                cDiv.className = 'p-3 rounded-xl bg-slate-800/60 hover:bg-slate-700/60 cursor-pointer flex items-center justify-between transition';
-                cDiv.innerHTML = `<span class="text-sm font-medium text-white">${escapeHtml(c.name)}</span><i class="fa-solid fa-arrow-right text-teal-400"></i>`;
-                cDiv.onclick = () => executeForward(c.id);
-                list.appendChild(cDiv);
-            });
-
-            document.getElementById('forward-modal').classList.remove('hidden');
-        }
-
-        function closeForwardModal() { document.getElementById('forward-modal').classList.add('hidden'); }
-
-        function executeForward(targetId) {
-            const messages = state.chats[state.activeContactId] || [];
-            const msg = messages.find(m => m.id === activeContextMessageId);
-            if (!msg) return;
-
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const forwardedMsg = {
-                id: 'msg_' + Date.now(),
-                sender: 'user',
-                senderId: state.user.id,
-                senderName: state.user.name,
-                receiverId: targetId,
-                text: `[Forwarded] ${msg.text || ''}`,
-                media: msg.media ? { ...msg.media } : null,
-                time: time,
-                reactions: []
-            };
-
-            if (!state.chats[targetId]) state.chats[targetId] = [];
-            state.chats[targetId].push(forwardedMsg);
             saveAppState();
-            closeForwardModal();
-            showNotification('Forwarded', 'Message forwarded successfully.');
+            document.getElementById('contact-search').value = '';
+            document.getElementById('clear-search-btn').classList.add('hidden');
+            renderContacts('');
+            selectContact(id);
         }
-
-        function deleteContextMessage() {
-            state.chats[state.activeContactId] = (state.chats[state.activeContactId] || []).filter(m => m.id !== activeContextMessageId);
-            saveAppState();
-            renderMessages();
-            closeContextMenus();
-        }
-
-        function contextActionClearChat() {
-            const targetId = activeContextContactId || state.activeContactId;
-            state.chats[targetId] = [];
-            saveAppState();
-            renderMessages();
-            renderContacts(document.getElementById('contact-search')?.value || '');
-            closeContextMenus();
-        }
-
-        function contextActionDeleteContact() {
-            const targetId = activeContextContactId;
-            state.contacts = state.contacts.filter(c => c.id !== targetId);
-            delete state.chats[targetId];
-            if (state.activeContactId === targetId) selectContact('global-chat');
-            saveAppState();
-            renderContacts(document.getElementById('contact-search')?.value || '');
-            closeContextMenus();
-        }
-
-        function clearCurrentChat() {
-            state.chats[state.activeContactId] = [];
-            saveAppState();
-            renderMessages();
-            renderContacts(document.getElementById('contact-search')?.value || '');
-        }
-
-        function openLightbox(url) {
-            document.getElementById('lightbox-img').src = url;
-            document.getElementById('media-lightbox-modal').classList.remove('hidden');
-        }
-        function closeLightbox() { document.getElementById('media-lightbox-modal').classList.add('hidden'); }
-
-        function openAddContactModal() { 
-            document.getElementById('new-contact-name').value = '';
-            document.getElementById('new-contact-id').value = '';
-            document.getElementById('add-contact-modal').classList.remove('hidden'); 
-        }
-        function closeAddContactModal() { document.getElementById('add-contact-modal').classList.add('hidden'); }
 
         function addNewContact(event) {
             event.preventDefault();
@@ -954,18 +811,15 @@
 
             if (!name || !id) return;
 
-            if (state.contacts.some(c => c.id === id)) {
-                showNotification('Error', 'A contact with this ID already exists.');
-                return;
+            if (!state.contacts.some(c => c.id === id)) {
+                const bgColors = ['bg-indigo-600', 'bg-pink-600', 'bg-teal-600', 'bg-amber-600', 'bg-purple-600'];
+                state.contacts.push({ 
+                    id, 
+                    name, 
+                    avatarBg: bgColors[Math.floor(Math.random() * bgColors.length)],
+                    isOnline: true
+                });
             }
-
-            const bgColors = ['bg-indigo-600', 'bg-pink-600', 'bg-teal-600', 'bg-amber-600', 'bg-purple-600'];
-            state.contacts.push({ 
-                id, 
-                name, 
-                avatarBg: bgColors[Math.floor(Math.random() * bgColors.length)],
-                isOnline: Math.random() > 0.3
-            });
 
             if (!state.chats[id]) {
                 state.chats[id] = [];
