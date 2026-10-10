@@ -10,13 +10,13 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .glass-panel {
-            background: rgba(30, 41, 59, 0.75);
+            background: rgba(30, 41, 59, 0.85);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .glass-chat {
-            background: rgba(15, 23, 42, 0.55);
+            background: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
@@ -27,14 +27,14 @@
 </head>
 <body id="app-body" class="h-full font-sans antialiased overflow-hidden bg-slate-900 text-slate-100">
 
-    <div id="login-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="login-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="glass-panel w-full max-w-md rounded-3xl p-8 shadow-2xl border border-slate-700/80 text-center space-y-6">
             <div class="w-16 h-16 rounded-2xl bg-teal-500/20 text-teal-400 flex items-center justify-center mx-auto text-2xl shadow-lg border border-teal-500/30">
                 <i class="fa-solid fa-network-wired"></i>
             </div>
             <div>
                 <h2 class="text-2xl font-bold text-white">Welcome to Nexus Network</h2>
-                <p class="text-xs text-slate-400 mt-1">Sign in or register with your credentials.</p>
+                <p class="text-xs text-slate-400 mt-1">Sign in or register to access your secure network.</p>
             </div>
             <form onsubmit="handleInitialLogin(event)" class="space-y-4 text-left">
                 <div>
@@ -50,16 +50,16 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Choose Avatar Initial Color</label>
                     <div class="grid grid-cols-4 gap-2">
-                        <label class="cursor-pointer flex items-center justify-center p-3 rounded-xl bg-teal-600 text-white font-bold hover:opacity-90 transition">
+                        <label class="cursor-pointer flex items-center justify-center p-3 rounded-xl bg-teal-600 text-white font-bold hover:opacity-90 transition text-xs">
                             <input type="radio" name="avatar-color" value="bg-teal-600" checked class="sr-only"> Teal
                         </label>
-                        <label class="cursor-pointer flex items-center justify-center p-3 rounded-xl bg-indigo-600 text-white font-bold hover:opacity-90 transition">
+                        <label class="cursor-pointer flex items-center justify-center p-3 rounded-xl bg-indigo-600 text-white font-bold hover:opacity-90 transition text-xs">
                             <input type="radio" name="avatar-color" value="bg-indigo-600" class="sr-only"> Indigo
                         </label>
-                        <label class="cursor-pointer flex items-center justify-center p-3 rounded-xl bg-pink-600 text-white font-bold hover:opacity-90 transition">
+                        <label class="cursor-pointer flex items-center justify-center p-3 rounded-xl bg-pink-600 text-white font-bold hover:opacity-90 transition text-xs">
                             <input type="radio" name="avatar-color" value="bg-pink-600" class="sr-only"> Pink
                         </label>
-                        <label class="cursor-pointer flex items-center justify-center p-3 rounded-xl bg-amber-600 text-white font-bold hover:opacity-90 transition">
+                        <label class="cursor-pointer flex items-center justify-center p-3 rounded-xl bg-amber-600 text-white font-bold hover:opacity-90 transition text-xs">
                             <input type="radio" name="avatar-color" value="bg-amber-600" class="sr-only"> Amber
                         </label>
                     </div>
@@ -110,7 +110,7 @@
                     <i class="fa-solid fa-search absolute left-3.5 text-slate-400 text-sm pointer-events-none"></i>
                     <input type="text" id="contact-search" oninput="filterContacts()" placeholder="Search contacts by name or ID..." 
                            class="w-full pl-10 pr-9 py-2 bg-slate-800/40 border border-slate-700/50 rounded-xl text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 transition">
-                    <button type="button" id="clear-search-btn" onclick="clearContactSearch()" class="absolute right-3 text-slate-400 hover:text-white hidden text-xs p-1">
+                    <button type="button" id="clear-search-btn" onclick="clearContactSearch()" class="absolute right-3 text-slate-400 hover:text-white hidden text-xs p-1" title="Clear Search">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
@@ -123,14 +123,13 @@
 
             <!-- Sidebar Footer Status -->
             <div class="p-3 border-t border-slate-700/30 text-center text-xs text-slate-500 flex justify-between items-center px-4">
-                <span>IndexedDB Storage</span>
+                <span>Storage: Local + IndexedDB</span>
                 <span id="connection-status" class="text-emerald-400 flex items-center">
                     <i class="fa-solid fa-circle text-[8px] mr-1.5"></i> Connected
                 </span>
             </div>
         </aside>
 
-        <!-- Main Chat Area -->
         <main class="flex-1 flex flex-col h-full glass-chat relative overflow-hidden">
             
             <!-- Chat Header -->
@@ -140,12 +139,12 @@
                         <i class="fa-solid fa-bars text-lg"></i>
                     </button>
                     <div class="relative">
-                        <div id="active-contact-avatar" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white bg-slate-700 shadow">🌍</div>
-                        <span id="active-status-indicator" class="hidden absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+                        <div id="active-contact-avatar" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white bg-teal-600 shadow">🌍</div>
+                        <span id="active-status-indicator" class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
                     </div>
                     <div>
                         <h3 id="active-contact-name" class="font-semibold text-sm text-slate-100">Global Public Channel</h3>
-                        <p id="active-contact-status" class="text-xs text-slate-400">Public broadcast network for all active users</p>
+                        <p id="active-contact-status" class="text-xs text-emerald-400">Online • Public broadcast network</p>
                     </div>
                 </div>
 
@@ -162,7 +161,7 @@
             </div>
 
             <!-- Media Preview Bar -->
-            <div id="media-preview-bar" class="hidden px-4 py-2 bg-slate-800/80 border-t border-slate-700/50 flex items-center justify-between">
+            <div id="media-preview-bar" class="hidden px-4 py-2 bg-slate-800/90 border-t border-slate-700/50 flex items-center justify-between">
                 <div class="flex items-center space-x-3 overflow-hidden">
                     <div id="media-preview-thumbnail" class="w-10 h-10 rounded-lg bg-slate-700 flex items-center justify-center text-slate-300 text-lg overflow-hidden shrink-0"></div>
                     <div class="overflow-hidden">
@@ -170,7 +169,7 @@
                         <p id="media-preview-filesize" class="text-[10px] text-slate-400">0 MB</p>
                     </div>
                 </div>
-                <button onclick="cancelMediaAttachment()" class="text-slate-400 hover:text-red-400 p-1.5"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="cancelMediaAttachment()" class="text-slate-400 hover:text-red-400 p-1.5"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
             <!-- Message Input Form -->
@@ -181,8 +180,8 @@
                         <i class="fa-solid fa-paperclip text-lg"></i>
                     </button>
 
-                    <input type="text" id="message-input" placeholder="Type a message to the network..." autocomplete="off"
-                           class="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 transition">
+                    <input type="text" id="message-input" placeholder="Type a secure message..." autocomplete="off"
+                           class="flex-1 px-4 py-3 bg-slate-800/60 border border-slate-700/50 rounded-xl text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 transition">
                     
                     <button type="submit" id="send-btn" title="Send Message"
                             class="p-3 px-5 rounded-xl bg-teal-600 text-white font-semibold shadow-lg hover:bg-teal-500 transition flex items-center justify-center">
@@ -233,7 +232,6 @@
         </div>
     </div>
 
-    <!-- File Preview Modal -->
     <div id="file-preview-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
         <div class="glass-panel w-full max-w-2xl max-h-[85vh] rounded-2xl p-6 shadow-2xl border border-slate-700 flex flex-col">
             <div class="flex justify-between items-center pb-4 border-b border-slate-700/50">
@@ -252,7 +250,7 @@
             <div class="flex justify-end space-x-3 pt-3 border-t border-slate-700/50">
                 <button onclick="closeFilePreviewModal()" class="px-4 py-2 rounded-xl text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Close</button>
                 <a id="file-preview-download-btn" href="#" download="" class="px-5 py-2 rounded-xl text-sm bg-teal-600 text-white font-semibold hover:bg-teal-500 transition flex items-center space-x-2">
-                    <i class="fa-solid fa-download"></i><span>Download to Desktop</span>
+                    <i class="fa-solid fa-download"></i><span>Download File</span>
                 </a>
             </div>
         </div>
@@ -274,7 +272,7 @@
     <div id="add-contact-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="glass-panel w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-700">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-white">Add Contact</h3>
+                <h3 class="text-lg font-semibold text-white">Add New Contact</h3>
                 <button onclick="closeAddContactModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form onsubmit="addNewContact(event)" class="space-y-4">
@@ -316,15 +314,15 @@
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-2">Color Theme</label>
                     <div class="grid grid-cols-1 gap-2">
-                        <button onclick="setTheme('teal')" class="flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-teal-500/40 hover:bg-slate-800 transition text-left">
+                        <button type="button" onclick="setTheme('teal')" class="flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-teal-500/40 hover:bg-slate-800 transition text-left">
                             <span class="text-sm font-medium text-teal-400">Nexus Default Teal</span>
                             <span class="w-4 h-4 rounded-full bg-teal-500"></span>
                         </button>
-                        <button onclick="setTheme('oled')" class="flex items-center justify-between p-3 rounded-xl bg-black border border-slate-800 hover:bg-slate-900 transition text-left">
+                        <button type="button" onclick="setTheme('oled')" class="flex items-center justify-between p-3 rounded-xl bg-black border border-slate-800 hover:bg-slate-900 transition text-left">
                             <span class="text-sm font-medium text-blue-400">Midnight OLED</span>
                             <span class="w-4 h-4 rounded-full bg-blue-600"></span>
                         </button>
-                        <button onclick="setTheme('sunset')" class="flex items-center justify-between p-3 rounded-xl bg-zinc-900 border border-amber-500/40 hover:bg-zinc-800 transition text-left">
+                        <button type="button" onclick="setTheme('sunset')" class="flex items-center justify-between p-3 rounded-xl bg-zinc-900 border border-amber-500/40 hover:bg-zinc-800 transition text-left">
                             <span class="text-sm font-medium text-amber-400">Sunset Gold</span>
                             <span class="w-4 h-4 rounded-full bg-amber-500"></span>
                         </button>
@@ -332,7 +330,7 @@
                 </div>
             </div>
             <div class="flex justify-end pt-4">
-                <button onclick="closeSettingsModal()" class="px-5 py-2 rounded-xl text-sm bg-teal-600 text-white font-semibold hover:bg-teal-500 transition">Save & Close</button>
+                <button type="button" onclick="closeSettingsModal()" class="px-5 py-2 rounded-xl text-sm bg-teal-600 text-white font-semibold hover:bg-teal-500 transition">Save & Close</button>
             </div>
         </div>
     </div>
@@ -344,7 +342,7 @@
             </div>
             <h4 id="notification-title" class="font-semibold text-white text-base">Notice</h4>
             <p id="notification-message" class="text-sm text-slate-300">Notification details.</p>
-            <button onclick="closeNotification()" class="w-full py-2.5 rounded-xl bg-teal-600 text-white font-semibold hover:bg-teal-500 transition text-sm">Dismiss</button>
+            <button type="button" onclick="closeNotification()" class="w-full py-2.5 rounded-xl bg-teal-600 text-white font-semibold hover:bg-teal-500 transition text-sm">Dismiss</button>
         </div>
     </div>
 
@@ -355,10 +353,23 @@
             theme: 'teal',
             activeContactId: 'global-chat',
             pendingMedia: null,
-            contacts: [],
+            contacts: [
+                { id: 'contact_alex', name: 'Alex Rivers', avatarBg: 'bg-indigo-600', isOnline: true },
+                { id: 'contact_sarah', name: 'Sarah Jenkins', avatarBg: 'bg-pink-600', isOnline: false },
+                { id: 'contact_dave', name: 'Dave Vance', avatarBg: 'bg-amber-600', isOnline: true }
+            ],
             chats: {
                 'global-chat': [
-                    { id: 'g1', sender: 'system', senderName: 'Network Broadcast', text: 'Welcome to Nexus Network! Send messages or files securely.', time: '12:00 PM', reactions: ['🔥'] }
+                    { id: 'g1', sender: 'system', senderName: 'Network Broadcast', text: 'Welcome to Nexus Network! Send messages, attachments, or search contacts securely.', time: '12:00 PM', reactions: ['🔥'] }
+                ],
+                'contact_alex': [
+                    { id: 'a1', sender: 'contact', senderName: 'Alex Rivers', text: 'Hey there! Ready for the project sync?', time: '11:30 AM', reactions: [] }
+                ],
+                'contact_sarah': [
+                    { id: 's1', sender: 'contact', senderName: 'Sarah Jenkins', text: 'I uploaded the document to shared folder.', time: 'Yesterday', reactions: ['👍'] }
+                ],
+                'contact_dave': [
+                    { id: 'd1', sender: 'contact', senderName: 'Dave Vance', text: 'Ping me when you are online.', time: 'Yesterday', reactions: [] }
                 ]
             }
         };
@@ -367,18 +378,25 @@
         let activeContextContactId = null;
 
         function initIndexedDB(callback) {
-            const request = indexedDB.open('NexusNetworkDB', 5);
-            request.onerror = (e) => console.error("IndexedDB error:", e);
-            request.onsuccess = (e) => {
-                db = e.target.result;
+            try {
+                const request = indexedDB.open('NexusNetworkDB', 6);
+                request.onerror = (e) => {
+                    console.warn("IndexedDB fallback to localStorage:", e);
+                    if (callback) callback();
+                };
+                request.onsuccess = (e) => {
+                    db = e.target.result;
+                    if (callback) callback();
+                };
+                request.onupgradeneeded = (e) => {
+                    const database = e.target.result;
+                    if (!database.objectStoreNames.contains('app_data')) {
+                        database.createObjectStore('app_data', { keyPath: 'id' });
+                    }
+                };
+            } catch (err) {
                 if (callback) callback();
-            };
-            request.onupgradeneeded = (e) => {
-                const database = e.target.result;
-                if (!database.objectStoreNames.contains('app_data')) {
-                    database.createObjectStore('app_data', { keyPath: 'id' });
-                }
-            };
+            }
         }
 
         function handleInitialLogin(event) {
@@ -392,44 +410,20 @@
 
             const userId = 'user_' + name.toLowerCase().replace(/[^a-z0-9]/g, '_');
 
-            const transaction = db.transaction(['app_data'], 'readwrite');
-            const store = transaction.objectStore('app_data');
-            const request = store.get(userId);
+            state.user = { name, id: userId, avatarBg };
+            
+            // Save to localStorage immediately as source of truth
+            localStorage.setItem('nexus_network_current_user', JSON.stringify(state.user));
+            saveAppState();
 
-            request.onsuccess = (e) => {
-                const existing = e.target.result;
-                if (existing) {
-                    if (existing.password && existing.password !== password) {
-                        showNotification('Authentication Failed', 'Incorrect password for this username.');
-                        return;
-                    }
-                    state.user = { name: existing.name || name, id: userId, avatarBg: existing.avatarBg || avatarBg };
-                    state.theme = existing.theme || 'teal';
-                    state.contacts = existing.contacts || [];
-                    if (existing.chats) state.chats = { ...state.chats, ...existing.chats };
-                } else {
-                    state.user = { name, id: userId, avatarBg };
-                    store.put({
-                        id: userId,
-                        name: name,
-                        password: password,
-                        theme: state.theme,
-                        contacts: state.contacts,
-                        chats: state.chats
-                    });
-                }
+            document.getElementById('login-modal').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
 
-                localStorage.setItem('nexus_network_user', JSON.stringify(state.user));
-                document.getElementById('login-modal').classList.add('hidden');
-                document.getElementById('app').classList.remove('hidden');
-
-                saveAppState();
-                loadAppState();
-            };
+            loadAppState();
         }
 
         function loadAppState() {
-            const savedUser = localStorage.getItem('nexus_network_user');
+            const savedUser = localStorage.getItem('nexus_network_current_user');
             if (!savedUser) {
                 document.getElementById('login-modal').classList.remove('hidden');
                 document.getElementById('app').classList.add('hidden');
@@ -440,56 +434,51 @@
             document.getElementById('login-modal').classList.add('hidden');
             document.getElementById('app').classList.remove('hidden');
 
-            if (!db) {
-                setTimeout(loadAppState, 100);
-                return;
+            // Try loading from localStorage state backup if available
+            const localBackup = localStorage.getItem('nexus_network_state_' + state.user.id);
+            if (localBackup) {
+                try {
+                    const parsed = JSON.parse(localBackup);
+                    if (parsed.contacts) state.contacts = parsed.contacts;
+                    if (parsed.chats) state.chats = { ...state.chats, ...parsed.chats };
+                    if (parsed.theme) state.theme = parsed.theme;
+                } catch(e) {}
             }
 
-            const transaction = db.transaction(['app_data'], 'readonly');
-            const store = transaction.objectStore('app_data');
-            const request = store.get(state.user.id);
-            request.onsuccess = (e) => {
-                const parsed = e.target.result;
-                if (parsed) {
-                    state.theme = parsed.theme || 'teal';
-                    state.contacts = parsed.contacts || [];
-                    if (parsed.chats) {
-                        state.chats = { ...state.chats, ...parsed.chats };
-                    }
-                }
+            document.getElementById('current-username').innerText = state.user.name;
+            document.getElementById('user-session-id').innerText = `ID: ${state.user.id}`;
+            document.getElementById('settings-username').value = state.user.name;
+            document.getElementById('settings-user-id').value = state.user.id;
+            document.getElementById('user-avatar').innerText = state.user.name.charAt(0).toUpperCase();
+            document.getElementById('user-avatar').className = `w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md ${state.user.avatarBg || 'bg-teal-600'}`;
 
-                document.getElementById('current-username').innerText = state.user.name;
-                document.getElementById('user-session-id').innerText = `ID: ${state.user.id}`;
-                document.getElementById('settings-username').value = state.user.name;
-                document.getElementById('settings-user-id').value = state.user.id;
-                document.getElementById('user-avatar').innerText = state.user.name.charAt(0).toUpperCase();
-                document.getElementById('user-avatar').className = `w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md ${state.user.avatarBg || 'bg-teal-600'}`;
-
-                setTheme(state.theme, false);
-                renderContacts();
-                selectContact(state.activeContactId || 'global-chat');
-            };
+            setTheme(state.theme, false);
+            renderContacts();
+            selectContact(state.activeContactId || 'global-chat');
         }
 
         function saveAppState() {
-            if (!state.user || !db) return;
-            localStorage.setItem('nexus_network_user', JSON.stringify(state.user));
-            
-            try {
-                const transaction = db.transaction(['app_data'], 'readwrite');
-                const store = transaction.objectStore('app_data');
-                const req = store.get(state.user.id);
-                req.onsuccess = (e) => {
-                    let record = e.target.result || { id: state.user.id };
-                    record.name = state.user.name;
-                    record.avatarBg = state.user.avatarBg;
-                    record.theme = state.theme;
-                    record.contacts = state.contacts;
-                    record.chats = state.chats;
-                    store.put(record);
-                };
-            } catch (err) {
-                console.error("IndexedDB save error:", err);
+            if (!state.user) return;
+            localStorage.setItem('nexus_network_current_user', JSON.stringify(state.user));
+            localStorage.setItem('nexus_network_state_' + state.user.id, JSON.stringify({
+                contacts: state.contacts,
+                chats: state.chats,
+                theme: state.theme
+            }));
+
+            if (db) {
+                try {
+                    const transaction = db.transaction(['app_data'], 'readwrite');
+                    const store = transaction.objectStore('app_data');
+                    store.put({
+                        id: state.user.id,
+                        name: state.user.name,
+                        avatarBg: state.user.avatarBg,
+                        theme: state.theme,
+                        contacts: state.contacts,
+                        chats: state.chats
+                    });
+                } catch (err) {}
             }
         }
 
@@ -539,14 +528,6 @@
                 c.name.toLowerCase().includes(trimmedFilter) || c.id.toLowerCase().includes(trimmedFilter)
             );
 
-            if (state.contacts.length === 0 && !trimmedFilter) {
-                const emptyNotice = document.createElement('div');
-                emptyNotice.className = 'p-4 text-center text-xs text-slate-500 italic';
-                emptyNotice.innerText = 'No personal contacts added yet. Click + to add.';
-                container.appendChild(emptyNotice);
-                return;
-            }
-
             if (filtered.length === 0 && trimmedFilter) {
                 const noFoundNotice = document.createElement('div');
                 noFoundNotice.className = 'p-6 text-center text-xs text-slate-400 flex flex-col items-center justify-center space-y-2';
@@ -555,9 +536,17 @@
                         <i class="fa-solid fa-user-slash text-base"></i>
                     </div>
                     <p class="font-medium text-slate-300">No contact found</p>
-                    <p class="text-[11px] text-slate-500">Try searching with a different name or ID</p>
+                    <p class="text-[11px] text-slate-500">No matching contact or ID found</p>
                 `;
                 container.appendChild(noFoundNotice);
+                return;
+            }
+
+            if (state.contacts.length === 0 && !trimmedFilter) {
+                const emptyNotice = document.createElement('div');
+                emptyNotice.className = 'p-4 text-center text-xs text-slate-500 italic';
+                emptyNotice.innerText = 'No personal contacts added yet. Click + to add.';
+                container.appendChild(emptyNotice);
                 return;
             }
 
@@ -565,10 +554,6 @@
                 const isActive = state.activeContactId === contact.id;
                 const lastMsgList = state.chats[contact.id] || [];
                 const lastMsgObj = lastMsgList.length > 0 ? lastMsgList[lastMsgList.length - 1] : null;
-
-                if (contact.isOnline === undefined) {
-                    contact.isOnline = Math.random() > 0.35;
-                }
 
                 const div = document.createElement('div');
                 div.className = `flex items-center justify-between p-3 rounded-xl transition select-none ${isActive ? 'bg-teal-600/20 border border-teal-500/30' : 'hover:bg-slate-800/40'}`;
@@ -589,7 +574,7 @@
                             </div>
                             <p class="text-xs text-slate-400 truncate mt-0.5">${lastMsgObj ? escapeHtml(lastMsgObj.text || 'Media attachment') : 'No messages yet'}</p>
                         </div>
-                        <button onclick="event.stopPropagation(); openContactContextMenuDirect(event, '${contact.id}')" class="p-2 text-slate-400 hover:text-white rounded-lg transition shrink-0" title="Contact Options">
+                        <button type="button" onclick="event.stopPropagation(); openContactContextMenuDirect(event, '${contact.id}')" class="p-2 text-slate-400 hover:text-white rounded-lg transition shrink-0" title="Contact Options">
                             <i class="fa-solid fa-ellipsis-vertical text-xs"></i>
                         </button>
                     </div>
@@ -620,7 +605,8 @@
             state.activeContactId = contactId;
             if (contactId === 'global-chat') {
                 document.getElementById('active-contact-name').innerText = 'Global Public Channel';
-                document.getElementById('active-contact-status').innerText = 'Public broadcast network for all active users';
+                document.getElementById('active-contact-status').innerText = 'Online • Public broadcast network';
+                document.getElementById('active-contact-status').className = 'text-xs text-emerald-400';
                 document.getElementById('active-contact-avatar').innerText = '🌍';
                 document.getElementById('active-contact-avatar').className = 'w-10 h-10 rounded-full flex items-center justify-center font-bold text-white bg-teal-600 shadow';
             } else {
@@ -632,6 +618,7 @@
                 }
                 document.getElementById('active-contact-name').innerText = contact.name;
                 document.getElementById('active-contact-status').innerText = contact.isOnline ? 'Online • Secure Connection' : 'Offline • End-to-end encrypted';
+                document.getElementById('active-contact-status').className = contact.isOnline ? 'text-xs text-emerald-400' : 'text-xs text-slate-400';
                 const avatar = document.getElementById('active-contact-avatar');
                 avatar.innerText = contact.name.charAt(0).toUpperCase();
                 avatar.className = `w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow ${contact.avatarBg || 'bg-indigo-600'}`;
@@ -658,7 +645,7 @@
 
             const messages = state.chats[state.activeContactId];
             if (messages.length === 0) {
-                container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-slate-500 space-y-2"><p class="text-sm font-medium">No messages yet. Start the conversation!</p></div>`;
+                container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-slate-500 space-y-2"><p class="text-sm font-medium">No messages yet. Send a message to start!</p></div>`;
                 return;
             }
 
@@ -719,20 +706,11 @@
                     const decodedText = atob(base64Content);
                     bodyEl.innerHTML = `<pre class="w-full h-full p-4 bg-slate-950/80 rounded-xl text-xs text-slate-300 font-mono overflow-auto whitespace-pre-wrap">${escapeHtml(decodedText)}</pre>`;
                 } catch(e) {
-                    bodyEl.innerHTML = `<p class="text-sm text-slate-400">Preview not available for this text encoding.</p>`;
+                    bodyEl.innerHTML = `<p class="text-sm text-slate-400">Preview not available.</p>`;
                 }
-            } else if (name.match(/\.(mp3|wav|ogg)$/i) || dataUrl.startsWith('data:audio/')) {
-                iconEl.className = 'fa-solid fa-file-audio text-teal-400 text-2xl';
-                bodyEl.innerHTML = `<audio controls class="w-full"><source src="${dataUrl}"></audio>`;
-            } else if (name.match(/\.(mp4|webm|ogv)$/i) || dataUrl.startsWith('data:video/')) {
-                iconEl.className = 'fa-solid fa-file-video text-teal-400 text-2xl';
-                bodyEl.innerHTML = `<video controls class="max-h-[50vh] w-full rounded-lg"><source src="${dataUrl}"></video>`;
-            } else if (name.endsWith('.pdf')) {
-                iconEl.className = 'fa-solid fa-file-pdf text-red-400 text-2xl';
-                bodyEl.innerHTML = `<div class="text-center space-y-3"><i class="fa-solid fa-file-pdf text-red-400 text-5xl"></i><p class="text-sm text-slate-300">PDF Document Preview</p><iframe src="${dataUrl}" class="w-full h-64 rounded-lg bg-white"></iframe></div>`;
             } else {
                 iconEl.className = 'fa-solid fa-file-lines text-teal-400 text-2xl';
-                bodyEl.innerHTML = `<div class="text-center space-y-3"><i class="fa-solid fa-file-lines text-teal-400 text-5xl"></i><p class="text-sm text-slate-300">File ready for preview and download.</p><p class="text-xs text-slate-500">${name} (${size})</p></div>`;
+                bodyEl.innerHTML = `<div class="text-center space-y-3"><i class="fa-solid fa-file-lines text-teal-400 text-5xl"></i><p class="text-sm text-slate-300">File ready for download.</p><p class="text-xs text-slate-500">${name} (${size})</p></div>`;
             }
 
             document.getElementById('file-preview-modal').classList.remove('hidden');
@@ -972,17 +950,12 @@
             const nameInput = document.getElementById('new-contact-name');
             const idInput = document.getElementById('new-contact-id');
             const name = nameInput.value.trim();
-            const id = idInput.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+            const id = 'contact_' + idInput.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
 
             if (!name || !id) return;
 
             if (state.contacts.some(c => c.id === id)) {
                 showNotification('Error', 'A contact with this ID already exists.');
-                return;
-            }
-
-            if (id === 'global-chat') {
-                showNotification('Error', 'Cannot use reserved channel ID.');
                 return;
             }
 
