@@ -9,24 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glass-chat {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-        .context-menu-shadow {
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
-        }
+        .glass-panel { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); }
+        .glass-chat { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .context-menu-shadow { box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5), 0 8px 10px -6px rgba(0,0,0,0.3); }
+        .msg-text { white-space: pre-wrap; }
     </style>
 </head>
 <body id="app-body" class="h-full font-sans antialiased overflow-hidden bg-slate-900 text-slate-100">
 
+    <!-- LOGIN -->
     <div id="login-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="glass-panel w-full max-w-md rounded-3xl p-8 shadow-2xl border border-slate-700/80 text-center space-y-6">
             <div class="w-16 h-16 rounded-2xl bg-teal-500/20 text-teal-400 flex items-center justify-center mx-auto text-2xl shadow-lg border border-teal-500/30">
@@ -34,7 +25,7 @@
             </div>
             <div>
                 <h2 class="text-2xl font-bold text-white">Welcome to Nexus Network</h2>
-                <p class="text-xs text-slate-400 mt-1">Sign in or register to access your secure network.</p>
+                <p class="text-xs text-slate-400 mt-1">Sign in, or just pick a new name and password to register.</p>
             </div>
             <form onsubmit="handleInitialLogin(event)" class="space-y-4 text-left">
                 <div>
@@ -48,120 +39,80 @@
                            class="w-full px-4 py-3 bg-slate-800/60 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Choose Avatar Initial Color</label>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Avatar Color (new accounts)</label>
                     <div class="grid grid-cols-4 gap-2">
-                        <label class="cursor-pointer flex items-center justify-center p-3 rounded-xl bg-teal-600 text-white font-bold hover:opacity-90 transition text-xs">
-                            <input type="radio" name="avatar-color" value="bg-teal-600" checked class="sr-only"> Teal
-                        </label>
-                        <label class="cursor-pointer flex items-center justify-center p-3 rounded-xl bg-indigo-600 text-white font-bold hover:opacity-90 transition text-xs">
-                            <input type="radio" name="avatar-color" value="bg-indigo-600" class="sr-only"> Indigo
-                        </label>
-                        <label class="cursor-pointer flex items-center justify-center p-3 rounded-xl bg-pink-600 text-white font-bold hover:opacity-90 transition text-xs">
-                            <input type="radio" name="avatar-color" value="bg-pink-600" class="sr-only"> Pink
-                        </label>
-                        <label class="cursor-pointer flex items-center justify-center p-3 rounded-xl bg-amber-600 text-white font-bold hover:opacity-90 transition text-xs">
-                            <input type="radio" name="avatar-color" value="bg-amber-600" class="sr-only"> Amber
-                        </label>
+                        <label class="cursor-pointer"><input type="radio" name="avatar-color" value="bg-teal-600" checked class="sr-only peer"><span class="flex items-center justify-center p-3 rounded-xl bg-teal-600 text-white font-bold text-xs opacity-60 peer-checked:opacity-100 peer-checked:ring-2 ring-white transition">Teal</span></label>
+                        <label class="cursor-pointer"><input type="radio" name="avatar-color" value="bg-indigo-600" class="sr-only peer"><span class="flex items-center justify-center p-3 rounded-xl bg-indigo-600 text-white font-bold text-xs opacity-60 peer-checked:opacity-100 peer-checked:ring-2 ring-white transition">Indigo</span></label>
+                        <label class="cursor-pointer"><input type="radio" name="avatar-color" value="bg-pink-600" class="sr-only peer"><span class="flex items-center justify-center p-3 rounded-xl bg-pink-600 text-white font-bold text-xs opacity-60 peer-checked:opacity-100 peer-checked:ring-2 ring-white transition">Pink</span></label>
+                        <label class="cursor-pointer"><input type="radio" name="avatar-color" value="bg-amber-600" class="sr-only peer"><span class="flex items-center justify-center p-3 rounded-xl bg-amber-600 text-white font-bold text-xs opacity-60 peer-checked:opacity-100 peer-checked:ring-2 ring-white transition">Amber</span></label>
                     </div>
                 </div>
-                <button type="submit" class="w-full py-3.5 rounded-xl bg-teal-600 text-white font-semibold hover:bg-teal-500 transition shadow-lg text-sm">
-                    Enter Nexus Network
-                </button>
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-teal-600 text-white font-semibold hover:bg-teal-500 transition shadow-lg text-sm">Enter Nexus Network</button>
             </form>
         </div>
     </div>
 
+    <!-- APP -->
     <div id="app" class="flex h-full w-full relative overflow-hidden hidden">
-        
-        <!-- Mobile Sidebar Backdrop Overlay -->
-        <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-20 hidden md:hidden transition-opacity"></div>
+        <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-20 hidden md:hidden"></div>
 
-        <!-- Sidebar / Contacts Drawer -->
         <aside id="sidebar" class="absolute md:relative z-30 w-80 sm:w-96 h-full flex flex-col transition-transform duration-300 transform -translate-x-full md:translate-x-0 glass-panel border-r border-slate-700/50">
-            
-            <!-- Sidebar Header & User Profile -->
             <div class="p-4 border-b border-slate-700/50 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <div class="relative cursor-pointer" onclick="openSettingsModal()">
                         <div id="user-avatar" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md bg-teal-600">U</div>
-                        <span id="user-status-dot" class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
                     </div>
                     <div>
                         <h2 id="current-username" class="font-semibold text-sm tracking-wide text-slate-100">Nexus User</h2>
-                        <span id="user-session-id" class="text-[11px] text-teal-400 font-mono">ID: Loading...</span>
+                        <span id="user-session-id" class="text-[11px] text-teal-400 font-mono">ID: ...</span>
                     </div>
                 </div>
                 <div class="flex items-center space-x-1">
-                    <button onclick="openSettingsModal()" title="Preferences & Themes" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
-                        <i class="fa-solid fa-gear"></i>
-                    </button>
-                    <button onclick="openAddContactModal()" title="Add Contact" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
-                        <i class="fa-solid fa-user-plus"></i>
-                    </button>
-                    <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                    <button onclick="openSettingsModal()" title="Preferences & Themes" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition"><i class="fa-solid fa-gear"></i></button>
+                    <button onclick="openAddContactModal()" title="Add Contact" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition"><i class="fa-solid fa-user-plus"></i></button>
+                    <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
 
-            <!-- Search Contacts Input with Clear Button -->
             <div class="p-3 border-b border-slate-700/30">
                 <div class="relative flex items-center">
                     <i class="fa-solid fa-search absolute left-3.5 text-slate-400 text-sm pointer-events-none"></i>
-                    <input type="text" id="contact-search" oninput="filterContacts()" placeholder="Search contacts by name or ID..." 
+                    <input type="text" id="contact-search" oninput="filterContacts()" placeholder="Search contacts by name or ID..."
                            class="w-full pl-10 pr-9 py-2 bg-slate-800/40 border border-slate-700/50 rounded-xl text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 transition">
-                    <button type="button" id="clear-search-btn" onclick="clearContactSearch()" class="absolute right-3 text-slate-400 hover:text-white hidden text-xs p-1" title="Clear Search">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                    <button type="button" id="clear-search-btn" onclick="clearContactSearch()" class="absolute right-3 text-slate-400 hover:text-white hidden text-xs p-1" title="Clear Search"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
 
-            <!-- Contacts List Container -->
-            <div id="contacts-list" class="flex-1 overflow-y-auto p-2 space-y-1">
-                <!-- Dynamically Populated -->
-            </div>
+            <div id="contacts-list" class="flex-1 overflow-y-auto p-2 space-y-1"></div>
 
-            <!-- Sidebar Footer Status -->
             <div class="p-3 border-t border-slate-700/30 text-center text-xs text-slate-500 flex justify-between items-center px-4">
-                <span>Storage: Local + IndexedDB</span>
-                <span id="connection-status" class="text-emerald-400 flex items-center">
-                    <i class="fa-solid fa-circle text-[8px] mr-1.5"></i> Connected
-                </span>
+                <span>Storage: Local browser</span>
+                <span class="text-emerald-400 flex items-center"><i class="fa-solid fa-circle text-[8px] mr-1.5"></i> Connected</span>
             </div>
         </aside>
 
-        <main class="flex-1 flex flex-col h-full glass-chat relative overflow-hidden">
-            
-            <!-- Chat Header -->
+        <main class="flex-1 flex flex-col h-full glass-chat relative overflow-hidden min-w-0">
             <header class="h-16 px-4 border-b border-slate-700/50 flex items-center justify-between glass-panel z-10">
-                <div class="flex items-center space-x-3">
-                    <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-xl text-slate-300 hover:bg-slate-800/60 transition mr-1">
-                        <i class="fa-solid fa-bars text-lg"></i>
-                    </button>
-                    <div class="relative">
+                <div class="flex items-center space-x-3 min-w-0">
+                    <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-xl text-slate-300 hover:bg-slate-800/60 transition mr-1"><i class="fa-solid fa-bars text-lg"></i></button>
+                    <div class="relative shrink-0">
                         <div id="active-contact-avatar" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white bg-teal-600 shadow">🌍</div>
                         <span id="active-status-indicator" class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
                     </div>
-                    <div>
-                        <h3 id="active-contact-name" class="font-semibold text-sm text-slate-100">Global Public Channel</h3>
+                    <div class="min-w-0">
+                        <h3 id="active-contact-name" class="font-semibold text-sm text-slate-100 truncate">Global Public Channel</h3>
                         <p id="active-contact-status" class="text-xs text-emerald-400">Online • Public broadcast network</p>
                     </div>
                 </div>
-
-                <div id="chat-header-actions" class="flex items-center space-x-1.5">
-                    <button onclick="clearCurrentChat()" title="Clear Current Chat History" class="p-2.5 rounded-xl text-slate-400 hover:text-amber-400 hover:bg-slate-800/60 transition">
-                        <i class="fa-solid fa-broom"></i>
-                    </button>
+                <div class="flex items-center space-x-1.5">
+                    <button onclick="clearCurrentChat()" title="Clear Current Chat History" class="p-2.5 rounded-xl text-slate-400 hover:text-amber-400 hover:bg-slate-800/60 transition"><i class="fa-solid fa-broom"></i></button>
                 </div>
             </header>
 
-            <!-- Messages Stream Area -->
-            <div id="messages-container" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 relative" oncontextmenu="event.preventDefault();">
-                <!-- Dynamically populated -->
-            </div>
+            <div id="messages-container" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 relative"></div>
 
-            <!-- Media Preview Bar -->
-            <div id="media-preview-bar" class="hidden px-4 py-2 bg-slate-800/90 border-t border-slate-700/50 flex items-center justify-between">
+            <div id="media-preview-bar" class="hidden px-4 py-2 bg-slate-800/90 border-t border-slate-700/50 items-center justify-between">
                 <div class="flex items-center space-x-3 overflow-hidden">
                     <div id="media-preview-thumbnail" class="w-10 h-10 rounded-lg bg-slate-700 flex items-center justify-center text-slate-300 text-lg overflow-hidden shrink-0"></div>
                     <div class="overflow-hidden">
@@ -172,26 +123,19 @@
                 <button onclick="cancelMediaAttachment()" class="text-slate-400 hover:text-red-400 p-1.5"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- Message Input Form -->
             <div class="p-3 sm:p-4 border-t border-slate-700/50 glass-panel">
                 <form id="message-form" onsubmit="handleSendMessage(event)" class="flex items-center space-x-2">
-                    <input type="file" id="media-file-input" class="hidden" onchange="handleFileSelected(event)" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip">
-                    <button type="button" onclick="document.getElementById('media-file-input').click()" title="Attach File" class="p-3 rounded-xl text-slate-400 hover:text-teal-400 hover:bg-slate-800/60 transition">
-                        <i class="fa-solid fa-paperclip text-lg"></i>
-                    </button>
-
+                    <input type="file" id="media-file-input" class="hidden" onchange="handleFileSelected(event)">
+                    <button type="button" onclick="document.getElementById('media-file-input').click()" title="Attach File" class="p-3 rounded-xl text-slate-400 hover:text-teal-400 hover:bg-slate-800/60 transition"><i class="fa-solid fa-paperclip text-lg"></i></button>
                     <input type="text" id="message-input" placeholder="Type a secure message..." autocomplete="off"
-                           class="flex-1 px-4 py-3 bg-slate-800/60 border border-slate-700/50 rounded-xl text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 transition">
-                    
-                    <button type="submit" id="send-btn" title="Send Message"
-                            class="p-3 px-5 rounded-xl bg-teal-600 text-white font-semibold shadow-lg hover:bg-teal-500 transition flex items-center justify-center">
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </button>
+                           class="flex-1 min-w-0 px-4 py-3 bg-slate-800/60 border border-slate-700/50 rounded-xl text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 transition">
+                    <button type="submit" title="Send Message" class="p-3 px-5 rounded-xl bg-teal-600 text-white font-semibold shadow-lg hover:bg-teal-500 transition flex items-center justify-center"><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
             </div>
         </main>
     </div>
 
+    <!-- Message context menu -->
     <div id="message-context-menu" class="fixed hidden z-50 glass-panel rounded-2xl p-2 w-56 context-menu-shadow border border-slate-700 space-y-1">
         <div class="flex items-center justify-between px-2 py-1.5 border-b border-slate-700/50 mb-1">
             <button onclick="addQuickReaction('❤️')" class="text-lg hover:scale-125 transition">❤️</button>
@@ -200,31 +144,18 @@
             <button onclick="addQuickReaction('😮')" class="text-lg hover:scale-125 transition">😮</button>
             <button onclick="addQuickReaction('🔥')" class="text-lg hover:scale-125 transition">🔥</button>
         </div>
-        <button onclick="copyContextMenuText()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-slate-800/80 rounded-xl flex items-center space-x-2.5 transition">
-            <i class="fa-solid fa-copy text-teal-400"></i>
-            <span>Copy Text</span>
-        </button>
-        <button onclick="openForwardModal()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-slate-800/80 rounded-xl flex items-center space-x-2.5 transition">
-            <i class="fa-solid fa-share text-blue-400"></i>
-            <span>Forward Message</span>
-        </button>
-        <button onclick="deleteContextMessage()" class="w-full text-left px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 rounded-xl flex items-center space-x-2.5 transition">
-            <i class="fa-solid fa-trash-can"></i>
-            <span>Delete Message</span>
-        </button>
+        <button onclick="copyContextMenuText()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-slate-800/80 rounded-xl flex items-center space-x-2.5 transition"><i class="fa-solid fa-copy text-teal-400"></i><span>Copy Text</span></button>
+        <button onclick="openForwardModal()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-slate-800/80 rounded-xl flex items-center space-x-2.5 transition"><i class="fa-solid fa-share text-blue-400"></i><span>Forward Message</span></button>
+        <button onclick="deleteContextMessage()" class="w-full text-left px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 rounded-xl flex items-center space-x-2.5 transition"><i class="fa-solid fa-trash-can"></i><span>Delete Message</span></button>
     </div>
 
+    <!-- Contact context menu -->
     <div id="contact-context-menu" class="fixed hidden z-50 glass-panel rounded-2xl p-2 w-52 context-menu-shadow border border-slate-700 space-y-1">
-        <button onclick="contextActionClearChat()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-slate-800/80 rounded-xl flex items-center space-x-2.5 transition">
-            <i class="fa-solid fa-broom text-amber-400"></i>
-            <span>Clear Conversation</span>
-        </button>
-        <button onclick="contextActionDeleteContact()" class="w-full text-left px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 rounded-xl flex items-center space-x-2.5 transition">
-            <i class="fa-solid fa-user-xmark"></i>
-            <span>Remove Contact</span>
-        </button>
+        <button onclick="contextActionClearChat()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-slate-800/80 rounded-xl flex items-center space-x-2.5 transition"><i class="fa-solid fa-broom text-amber-400"></i><span>Clear Conversation</span></button>
+        <button onclick="contextActionDeleteContact()" class="w-full text-left px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 rounded-xl flex items-center space-x-2.5 transition"><i class="fa-solid fa-user-xmark"></i><span>Remove Contact</span></button>
     </div>
 
+    <!-- Lightbox -->
     <div id="media-lightbox-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center hidden p-4" onclick="closeLightbox()">
         <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white hover:text-slate-300 text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
         <div class="max-w-4xl max-h-[90vh] flex items-center justify-center" onclick="event.stopPropagation()">
@@ -232,6 +163,7 @@
         </div>
     </div>
 
+    <!-- File preview -->
     <div id="file-preview-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
         <div class="glass-panel w-full max-w-2xl max-h-[85vh] rounded-2xl p-6 shadow-2xl border border-slate-700 flex flex-col">
             <div class="flex justify-between items-center pb-4 border-b border-slate-700/50">
@@ -244,18 +176,15 @@
                 </div>
                 <button onclick="closeFilePreviewModal()" class="text-slate-400 hover:text-white p-2"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <div id="file-preview-body" class="flex-1 my-4 overflow-y-auto flex items-center justify-center bg-slate-900/50 rounded-xl p-4 min-h-[250px]">
-                <!-- Dynamic preview content -->
-            </div>
+            <div id="file-preview-body" class="flex-1 my-4 overflow-y-auto flex items-center justify-center bg-slate-900/50 rounded-xl p-4 min-h-[250px]"></div>
             <div class="flex justify-end space-x-3 pt-3 border-t border-slate-700/50">
                 <button onclick="closeFilePreviewModal()" class="px-4 py-2 rounded-xl text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Close</button>
-                <a id="file-preview-download-btn" href="#" download="" class="px-5 py-2 rounded-xl text-sm bg-teal-600 text-white font-semibold hover:bg-teal-500 transition flex items-center space-x-2">
-                    <i class="fa-solid fa-download"></i><span>Download File</span>
-                </a>
+                <a id="file-preview-download-btn" href="#" download="" class="px-5 py-2 rounded-xl text-sm bg-teal-600 text-white font-semibold hover:bg-teal-500 transition flex items-center space-x-2"><i class="fa-solid fa-download"></i><span>Download File</span></a>
             </div>
         </div>
     </div>
 
+    <!-- Forward -->
     <div id="forward-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="glass-panel w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-700 space-y-4">
             <div class="flex justify-between items-center">
@@ -263,12 +192,11 @@
                 <button onclick="closeForwardModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <div id="forward-targets-list" class="max-h-60 overflow-y-auto space-y-2 pr-1"></div>
-            <div class="flex justify-end pt-2">
-                <button onclick="closeForwardModal()" class="px-4 py-2 rounded-xl text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Cancel</button>
-            </div>
+            <div class="flex justify-end pt-2"><button onclick="closeForwardModal()" class="px-4 py-2 rounded-xl text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Cancel</button></div>
         </div>
     </div>
 
+    <!-- Add contact -->
     <div id="add-contact-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="glass-panel w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-700">
             <div class="flex justify-between items-center mb-4">
@@ -277,13 +205,13 @@
             </div>
             <form onsubmit="addNewContact(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Contact Name</label>
-                    <input type="text" id="new-contact-name" required placeholder="e.g. Sarah Jenkins"
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Network ID / Username</label>
+                    <input type="text" id="new-contact-id" required placeholder="e.g. user_sarah or Sarah Jenkins"
                            class="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Network ID / Username</label>
-                    <input type="text" id="new-contact-id" required placeholder="e.g. sarah_net"
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Contact Name (optional)</label>
+                    <input type="text" id="new-contact-name" placeholder="Defaults to their registered name"
                            class="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500">
                 </div>
                 <div class="flex justify-end space-x-3 pt-2">
@@ -294,6 +222,7 @@
         </div>
     </div>
 
+    <!-- Settings -->
     <div id="settings-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="glass-panel w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-700">
             <div class="flex justify-between items-center mb-4">
@@ -302,569 +231,875 @@
             </div>
             <div class="space-y-5">
                 <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Your Network ID</label>
-                    <input type="text" id="settings-user-id" readonly
-                           class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-sm font-mono text-teal-400 focus:outline-none">
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Your Network ID (share this with friends)</label>
+                    <input type="text" id="settings-user-id" readonly class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-sm font-mono text-teal-400 focus:outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1">Display Name</label>
-                    <input type="text" id="settings-username" onchange="updateUsername(this.value)"
-                           class="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    <input type="text" id="settings-username" onchange="updateUsername(this.value)" class="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-2">Color Theme</label>
                     <div class="grid grid-cols-1 gap-2">
-                        <button type="button" onclick="setTheme('teal')" class="flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-teal-500/40 hover:bg-slate-800 transition text-left">
-                            <span class="text-sm font-medium text-teal-400">Nexus Default Teal</span>
-                            <span class="w-4 h-4 rounded-full bg-teal-500"></span>
-                        </button>
-                        <button type="button" onclick="setTheme('oled')" class="flex items-center justify-between p-3 rounded-xl bg-black border border-slate-800 hover:bg-slate-900 transition text-left">
-                            <span class="text-sm font-medium text-blue-400">Midnight OLED</span>
-                            <span class="w-4 h-4 rounded-full bg-blue-600"></span>
-                        </button>
-                        <button type="button" onclick="setTheme('sunset')" class="flex items-center justify-between p-3 rounded-xl bg-zinc-900 border border-amber-500/40 hover:bg-zinc-800 transition text-left">
-                            <span class="text-sm font-medium text-amber-400">Sunset Gold</span>
-                            <span class="w-4 h-4 rounded-full bg-amber-500"></span>
-                        </button>
+                        <button type="button" onclick="setTheme('teal')" class="flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-teal-500/40 hover:bg-slate-800 transition text-left"><span class="text-sm font-medium text-teal-400">Nexus Default Teal</span><span class="w-4 h-4 rounded-full bg-teal-500"></span></button>
+                        <button type="button" onclick="setTheme('oled')" class="flex items-center justify-between p-3 rounded-xl bg-black border border-slate-800 hover:bg-slate-900 transition text-left"><span class="text-sm font-medium text-blue-400">Midnight OLED</span><span class="w-4 h-4 rounded-full bg-blue-600"></span></button>
+                        <button type="button" onclick="setTheme('sunset')" class="flex items-center justify-between p-3 rounded-xl bg-zinc-900 border border-amber-500/40 hover:bg-zinc-800 transition text-left"><span class="text-sm font-medium text-amber-400">Sunset Gold</span><span class="w-4 h-4 rounded-full bg-amber-500"></span></button>
                     </div>
                 </div>
             </div>
-            <div class="flex justify-end pt-4">
+            <p id="settings-storage" class="text-[11px] text-slate-400 pt-3"></p>
+            <div class="flex justify-between pt-4">
+                <button type="button" onclick="logout()" class="px-4 py-2 rounded-xl text-sm bg-red-500/10 text-red-400 hover:bg-red-500/20 transition flex items-center space-x-2"><i class="fa-solid fa-right-from-bracket"></i><span>Log out</span></button>
                 <button type="button" onclick="closeSettingsModal()" class="px-5 py-2 rounded-xl text-sm bg-teal-600 text-white font-semibold hover:bg-teal-500 transition">Save & Close</button>
             </div>
         </div>
     </div>
 
-    <div id="notification-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <!-- Notification -->
+    <div id="notification-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center hidden p-4">
         <div class="glass-panel w-full max-w-sm rounded-2xl p-6 shadow-2xl border border-slate-700 text-center space-y-4">
-            <div id="notification-icon" class="w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center mx-auto text-xl">
-                <i class="fa-solid fa-circle-info"></i>
-            </div>
+            <div class="w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-circle-info"></i></div>
             <h4 id="notification-title" class="font-semibold text-white text-base">Notice</h4>
-            <p id="notification-message" class="text-sm text-slate-300">Notification details.</p>
+            <p id="notification-message" class="text-sm text-slate-300">Details.</p>
             <button type="button" onclick="closeNotification()" class="w-full py-2.5 rounded-xl bg-teal-600 text-white font-semibold hover:bg-teal-500 transition text-sm">Dismiss</button>
         </div>
     </div>
 
+    <!-- Toast -->
+    <div id="toast" class="fixed top-4 right-4 z-[70] hidden glass-panel rounded-xl px-4 py-3 text-xs text-slate-100 shadow-2xl max-w-xs"></div>
+
     <script>
-        let db = null;
-        let state = {
-            user: null,
-            theme: 'teal',
-            activeContactId: 'global-chat',
-            pendingMedia: null,
-            contacts: [],
-            chats: {
-                'global-chat': [
-                    { id: 'g1', sender: 'system', senderName: 'Network Broadcast', text: 'Welcome to Nexus Network! Send secure messages or add any contact instantly.', time: '12:00 PM', reactions: ['🔥'] }
-                ]
-            }
-        };
+    // ---------- Constants & helpers ----------
+    const MAX_FILE_BYTES = 5 * 1024 * 1024 * 1024; // 5 GB
+    const ONLINE_WINDOW_MS = 12000;
+    const BG_COLORS = ['bg-indigo-600', 'bg-pink-600', 'bg-teal-600', 'bg-amber-600', 'bg-purple-600'];
 
-        let activeContextMessageId = null;
-        let activeContextContactId = null;
+    const state = {
+        user: null,
+        theme: 'teal',
+        activeContactId: 'global-chat',
+        pendingMedia: null,
+        contacts: [],
+        chats: {},          // contactId -> messages
+        unread: {},         // contactId -> count
+        deleted: {}         // msgId -> true (hidden locally, mainly for global channel)
+    };
+    let ctxMessageId = null;
+    let ctxContactId = null;
+    let timers = [];
+    let storageWarned = false;
+    let globalSeeded = false;
 
-        function initIndexedDB(callback) {
-            try {
-                const request = indexedDB.open('NexusNetworkDB', 6);
-                request.onerror = (e) => {
-                    console.warn("IndexedDB fallback to localStorage:", e);
-                    if (callback) callback();
+    function readJSON(key, fallback) {
+        try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
+    }
+    function writeJSON(key, val) {
+        try { localStorage.setItem(key, JSON.stringify(val)); return true; }
+        catch (e) {
+            if (!storageWarned) { storageWarned = true; showNotification('Storage full', 'Browser storage is full. Try clearing old chats or sending smaller files.'); }
+            return false;
+        }
+    }
+    function $(id) { return document.getElementById(id); }
+    function slug(s) { return String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, ''); }
+    function escapeHtml(text) {
+        if (text === null || text === undefined) return '';
+        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+        return String(text).replace(/[&<>"']/g, m => map[m]);
+    }
+    function newId() { return 'm_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+    function fmtTime(ts) { return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+    function fmtSize(b) {
+        if (b < 1024) return b + ' B';
+        if (b < 1048576) return (b / 1024).toFixed(0) + ' KB';
+        if (b < 1073741824) return (b / 1048576).toFixed(1) + ' MB';
+        return (b / 1073741824).toFixed(2) + ' GB';
+    }
+
+    // ---------- File storage (IndexedDB, shared by all tabs) ----------
+    let filesDBPromise = null;
+    function filesDB() {
+        if (!filesDBPromise) {
+            filesDBPromise = new Promise((resolve, reject) => {
+                const req = indexedDB.open('NexusFilesDB', 1);
+                req.onupgradeneeded = (e) => {
+                    const d = e.target.result;
+                    if (!d.objectStoreNames.contains('files')) d.createObjectStore('files', { keyPath: 'id' });
                 };
-                request.onsuccess = (e) => {
-                    db = e.target.result;
-                    if (callback) callback();
-                };
-                request.onupgradeneeded = (e) => {
-                    const database = e.target.result;
-                    if (!database.objectStoreNames.contains('app_data')) {
-                        database.createObjectStore('app_data', { keyPath: 'id' });
-                    }
-                };
-            } catch (err) {
-                if (callback) callback();
-            }
-        }
-
-        function handleInitialLogin(event) {
-            event.preventDefault();
-            const name = document.getElementById('login-name-input').value.trim();
-            const password = document.getElementById('login-password-input').value;
-            const colorRadio = document.querySelector('input[name="avatar-color"]:checked');
-            const avatarBg = colorRadio ? colorRadio.value : 'bg-teal-600';
-
-            if (!name || !password) return;
-
-            const userId = 'user_' + name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-
-            state.user = { name, id: userId, avatarBg };
-            
-            // Save to localStorage immediately as source of truth
-            localStorage.setItem('nexus_network_current_user', JSON.stringify(state.user));
-            saveAppState();
-
-            document.getElementById('login-modal').classList.add('hidden');
-            document.getElementById('app').classList.remove('hidden');
-
-            loadAppState();
-        }
-
-        function loadAppState() {
-            const savedUser = localStorage.getItem('nexus_network_current_user');
-            if (!savedUser) {
-                document.getElementById('login-modal').classList.remove('hidden');
-                document.getElementById('app').classList.add('hidden');
-                return;
-            }
-
-            state.user = JSON.parse(savedUser);
-            document.getElementById('login-modal').classList.add('hidden');
-            document.getElementById('app').classList.remove('hidden');
-
-            // Try loading from localStorage state backup if available
-            const localBackup = localStorage.getItem('nexus_network_state_' + state.user.id);
-            if (localBackup) {
-                try {
-                    const parsed = JSON.parse(localBackup);
-                    if (parsed.contacts) state.contacts = parsed.contacts;
-                    if (parsed.chats) state.chats = { ...state.chats, ...parsed.chats };
-                    if (parsed.theme) state.theme = parsed.theme;
-                } catch(e) {}
-            }
-
-            document.getElementById('current-username').innerText = state.user.name;
-            document.getElementById('user-session-id').innerText = `ID: ${state.user.id}`;
-            document.getElementById('settings-username').value = state.user.name;
-            document.getElementById('settings-user-id').value = state.user.id;
-            document.getElementById('user-avatar').innerText = state.user.name.charAt(0).toUpperCase();
-            document.getElementById('user-avatar').className = `w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md ${state.user.avatarBg || 'bg-teal-600'}`;
-
-            setTheme(state.theme, false);
-            renderContacts();
-            selectContact(state.activeContactId || 'global-chat');
-        }
-
-        function saveAppState() {
-            if (!state.user) return;
-            localStorage.setItem('nexus_network_current_user', JSON.stringify(state.user));
-            localStorage.setItem('nexus_network_state_' + state.user.id, JSON.stringify({
-                contacts: state.contacts,
-                chats: state.chats,
-                theme: state.theme
-            }));
-
-            if (db) {
-                try {
-                    const transaction = db.transaction(['app_data'], 'readwrite');
-                    const store = transaction.objectStore('app_data');
-                    store.put({
-                        id: state.user.id,
-                        name: state.user.name,
-                        avatarBg: state.user.avatarBg,
-                        theme: state.theme,
-                        contacts: state.contacts,
-                        chats: state.chats
-                    });
-                } catch (err) {}
-            }
-        }
-
-        function setTheme(themeName, save = true) {
-            state.theme = themeName;
-            if (save) saveAppState();
-
-            const body = document.getElementById('app-body');
-            body.className = 'h-full font-sans antialiased overflow-hidden transition-colors duration-300 ';
-            if (themeName === 'teal') body.classList.add('bg-slate-900', 'text-slate-100');
-            else if (themeName === 'oled') body.classList.add('bg-black', 'text-slate-100');
-            else if (themeName === 'sunset') body.classList.add('bg-zinc-950', 'text-zinc-100');
-        }
-
-        function renderContacts(filter = '') {
-            const container = document.getElementById('contacts-list');
-            if (!container) return;
-            container.innerHTML = '';
-
-            const trimmedFilter = typeof filter === 'string' ? filter.trim().toLowerCase() : '';
-            const isGlobalActive = state.activeContactId === 'global-chat';
-            const showGlobal = !trimmedFilter || 'global public channel'.includes(trimmedFilter);
-
-            if (showGlobal) {
-                const globalDiv = document.createElement('div');
-                globalDiv.className = `flex items-center justify-between p-3 rounded-xl cursor-pointer transition select-none ${isGlobalActive ? 'bg-teal-600/20 border border-teal-500/30' : 'hover:bg-slate-800/40'}`;
-                globalDiv.onclick = () => selectContact('global-chat');
-                globalDiv.innerHTML = `
-                    <div class="flex items-center space-x-3 overflow-hidden w-full">
-                        <div class="relative shrink-0">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white bg-teal-600 shadow">🌍</div>
-                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
-                        </div>
-                        <div class="overflow-hidden flex-1">
-                            <div class="flex justify-between items-center">
-                                <h4 class="font-semibold text-sm truncate text-slate-200">Global Public Channel</h4>
-                                <span class="text-[10px] text-emerald-400 font-medium">Online</span>
-                            </div>
-                            <p class="text-xs text-slate-400 truncate mt-0.5">Public network broadcast</p>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(globalDiv);
-            }
-
-            const filtered = state.contacts.filter(c => 
-                c.name.toLowerCase().includes(trimmedFilter) || c.id.toLowerCase().includes(trimmedFilter)
-            );
-
-            if (filtered.length === 0 && trimmedFilter) {
-                const createQuickDiv = document.createElement('div');
-                createQuickDiv.className = 'p-3 rounded-xl bg-teal-600/10 border border-teal-500/30 text-center cursor-pointer hover:bg-teal-600/20 transition space-y-1';
-                createQuickDiv.onclick = () => {
-                    addNewContactDirect(trimmedFilter);
-                };
-                createQuickDiv.innerHTML = `
-                    <p class="text-xs font-semibold text-teal-400"><i class="fa-solid fa-user-plus mr-1"></i> Add "${escapeHtml(trimmedFilter)}" as Contact</p>
-                    <p class="text-[10px] text-slate-400">Click to instantly create and start messaging</p>
-                `;
-                container.appendChild(createQuickDiv);
-                return;
-            }
-
-            if (state.contacts.length === 0 && !trimmedFilter) {
-                const emptyNotice = document.createElement('div');
-                emptyNotice.className = 'p-6 text-center text-xs text-slate-400 flex flex-col items-center justify-center space-y-2';
-                emptyNotice.innerHTML = `
-                    <div class="w-10 h-10 rounded-full bg-slate-800/80 flex items-center justify-center text-slate-400">
-                        <i class="fa-solid fa-address-book text-base"></i>
-                    </div>
-                    <p class="font-medium text-slate-300">No contacts yet</p>
-                    <p class="text-[11px] text-slate-500">Click the + icon above to add any contact</p>
-                `;
-                container.appendChild(emptyNotice);
-                return;
-            }
-
-            filtered.forEach(contact => {
-                const isActive = state.activeContactId === contact.id;
-                const lastMsgList = state.chats[contact.id] || [];
-                const lastMsgObj = lastMsgList.length > 0 ? lastMsgList[lastMsgList.length - 1] : null;
-
-                const div = document.createElement('div');
-                div.className = `flex items-center justify-between p-3 rounded-xl transition select-none ${isActive ? 'bg-teal-600/20 border border-teal-500/30' : 'hover:bg-slate-800/40'}`;
-                div.oncontextmenu = (e) => openContactContextMenu(e, contact.id);
-
-                div.innerHTML = `
-                    <div class="flex items-center space-x-3 overflow-hidden w-full">
-                        <div class="relative shrink-0">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${contact.avatarBg || 'bg-indigo-600'}">
-                                ${contact.name.charAt(0).toUpperCase()}
-                            </div>
-                            <span class="absolute bottom-0 right-0 w-3 h-3 ${contact.isOnline ? 'bg-emerald-500' : 'bg-slate-500'} border-2 border-slate-900 rounded-full"></span>
-                        </div>
-                        <div class="overflow-hidden flex-1 cursor-pointer" onclick="selectContact('${contact.id}')">
-                            <div class="flex justify-between items-center">
-                                <h4 class="font-semibold text-sm truncate text-slate-200">${escapeHtml(contact.name)}</h4>
-                                <span class="text-[10px] ${contact.isOnline ? 'text-emerald-400' : 'text-slate-500'} font-medium">${contact.isOnline ? 'Online' : 'Offline'}</span>
-                            </div>
-                            <p class="text-xs text-slate-400 truncate mt-0.5">${lastMsgObj ? escapeHtml(lastMsgObj.text || 'Media attachment') : 'No messages yet'}</p>
-                        </div>
-                        <button type="button" onclick="event.stopPropagation(); openContactContextMenuDirect(event, '${contact.id}')" class="p-2 text-slate-400 hover:text-white rounded-lg transition shrink-0" title="Contact Options">
-                            <i class="fa-solid fa-ellipsis-vertical text-xs"></i>
-                        </button>
-                    </div>
-                `;
-                container.appendChild(div);
+                req.onsuccess = (e) => resolve(e.target.result);
+                req.onerror = () => reject(req.error);
             });
         }
+        return filesDBPromise;
+    }
+    async function putFile(id, blob) {
+        const db = await filesDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction('files', 'readwrite');
+            tx.objectStore('files').put({ id, blob });
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+            tx.onabort = () => reject(tx.error || new Error('aborted'));
+        });
+    }
+    async function getFileBlob(id) {
+        const db = await filesDB();
+        return new Promise((resolve, reject) => {
+            const req = db.transaction('files', 'readonly').objectStore('files').get(id);
+            req.onsuccess = () => resolve(req.result ? req.result.blob : null);
+            req.onerror = () => reject(req.error);
+        });
+    }
+    const urlCache = new Map();
+    async function getFileURL(id) {
+        if (urlCache.has(id)) return urlCache.get(id);
+        try {
+            const blob = await getFileBlob(id);
+            if (!blob) return null;
+            const url = URL.createObjectURL(blob);
+            urlCache.set(id, url);
+            return url;
+        } catch (e) { return null; }
+    }
+    let sendingFile = false;
 
-        function filterContacts() {
-            const input = document.getElementById('contact-search');
-            const clearBtn = document.getElementById('clear-search-btn');
-            if (input.value.trim().length > 0) {
-                clearBtn.classList.remove('hidden');
-            } else {
-                clearBtn.classList.add('hidden');
+    async function hashPw(pw, salt) {
+        const text = salt + ':' + pw;
+        try {
+            if (window.crypto && crypto.subtle) {
+                const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+                return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
             }
-            renderContacts(input.value);
+        } catch (e) {}
+        let h = 5381;
+        for (let i = 0; i < text.length; i++) h = ((h << 5) + h + text.charCodeAt(i)) | 0;
+        return 'f' + (h >>> 0).toString(16);
+    }
+
+    function showToast(msg) {
+        const t = $('toast');
+        t.textContent = msg;
+        t.classList.remove('hidden');
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => t.classList.add('hidden'), 3000);
+    }
+    function showNotification(title, message) {
+        $('notification-title').innerText = title;
+        $('notification-message').innerText = message;
+        $('notification-modal').classList.remove('hidden');
+    }
+    function closeNotification() { $('notification-modal').classList.add('hidden'); }
+
+    // ---------- Auth ----------
+    async function handleInitialLogin(event) {
+        event.preventDefault();
+        const name = $('login-name-input').value.trim();
+        const password = $('login-password-input').value;
+        const colorRadio = document.querySelector('input[name="avatar-color"]:checked');
+        const avatarBg = colorRadio ? colorRadio.value : 'bg-teal-600';
+        const s = slug(name);
+        if (!s || !password) { showNotification('Invalid name', 'Please use letters or numbers in your name.'); return; }
+
+        const id = 'user_' + s;
+        const users = readJSON('nexus_users', {});
+        const hash = await hashPw(password, id);
+
+        if (users[id]) {
+            if (users[id].hash !== hash) { showNotification('Incorrect password', 'That password does not match this account.'); return; }
+        } else {
+            users[id] = { id, name, avatarBg, hash };
+            if (!writeJSON('nexus_users', users)) return;
+        }
+        sessionStorage.setItem('nexus_session_user', id);
+        startSession(users[id]);
+    }
+
+    function logout() {
+        timers.forEach(clearInterval); timers = [];
+        const presence = readJSON('nexus_presence', {});
+        if (state.user) { delete presence[state.user.id]; writeJSON('nexus_presence', presence); }
+        sessionStorage.removeItem('nexus_session_user');
+        location.reload();
+    }
+
+    function startSession(userRecord) {
+        state.user = { id: userRecord.id, name: userRecord.name, avatarBg: userRecord.avatarBg };
+        const saved = readJSON('nexus_state_' + state.user.id, {});
+        state.contacts = saved.contacts || [];
+        state.chats = saved.chats || {};
+        state.unread = saved.unread || {};
+        state.deleted = saved.deleted || {};
+        state.theme = saved.theme || 'teal';
+        state.activeContactId = 'global-chat';
+        state.chats['global-chat'] = [];
+
+        $('login-modal').classList.add('hidden');
+        $('app').classList.remove('hidden');
+        $('current-username').innerText = state.user.name;
+        $('user-session-id').innerText = 'ID: ' + state.user.id;
+        $('settings-username').value = state.user.name;
+        $('settings-user-id').value = state.user.id;
+        const av = $('user-avatar');
+        av.innerText = state.user.name.charAt(0).toUpperCase();
+        av.className = 'w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md ' + state.user.avatarBg;
+
+        setTheme(state.theme, false);
+        try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+        syncGlobal(true);
+        processInbox();
+        heartbeat();
+        selectContact('global-chat');
+
+        timers.push(setInterval(() => { heartbeat(); processInbox(); syncGlobal(); renderContacts($('contact-search').value); refreshActiveHeader(); }, 3000));
+        timers.push(setInterval(() => { processInbox(); syncGlobal(); }, 1000));
+        window.addEventListener('storage', (e) => {
+            if (!e.key) return;
+            if (e.key === 'nexus_inbox_' + state.user.id) processInbox();
+            else if (e.key === 'nexus_global') syncGlobal();
+        });
+        window.addEventListener('beforeunload', () => {
+            const p = readJSON('nexus_presence', {}); delete p[state.user.id]; writeJSON('nexus_presence', p);
+        });
+    }
+
+    function saveAppState() {
+        if (!state.user) return;
+        const chats = {};
+        Object.keys(state.chats).forEach(k => { if (k !== 'global-chat') chats[k] = state.chats[k]; });
+        writeJSON('nexus_state_' + state.user.id, {
+            contacts: state.contacts, chats, unread: state.unread, deleted: state.deleted, theme: state.theme
+        });
+    }
+
+    // ---------- Presence ----------
+    function heartbeat() {
+        const p = readJSON('nexus_presence', {});
+        p[state.user.id] = Date.now();
+        writeJSON('nexus_presence', p);
+    }
+    function isOnline(id) {
+        const p = readJSON('nexus_presence', {});
+        return p[id] && (Date.now() - p[id]) < ONLINE_WINDOW_MS;
+    }
+    function registeredUser(id) { return readJSON('nexus_users', {})[id] || null; }
+
+    // ---------- Theme ----------
+    function setTheme(themeName, save = true) {
+        state.theme = themeName;
+        if (save) saveAppState();
+        const body = $('app-body');
+        body.className = 'h-full font-sans antialiased overflow-hidden transition-colors duration-300 ';
+        if (themeName === 'oled') body.classList.add('bg-black', 'text-slate-100');
+        else if (themeName === 'sunset') body.classList.add('bg-zinc-950', 'text-zinc-100');
+        else body.classList.add('bg-slate-900', 'text-slate-100');
+    }
+
+    // ---------- Messaging core ----------
+    function pushLocal(chatId, msg) {
+        if (!state.chats[chatId]) state.chats[chatId] = [];
+        if (state.chats[chatId].some(m => m.id === msg.id)) return false;
+        state.chats[chatId].push(msg);
+        state.chats[chatId].sort((a, b) => a.ts - b.ts);
+        return true;
+    }
+
+    function deliver(targetId, msg) {
+        // msg: {id, senderId, senderName, text, media, ts, reactions}
+        pushLocal(targetId, { ...msg, reactions: msg.reactions || [] });
+        if (targetId === 'global-chat') {
+            const shared = readJSON('nexus_global', []);
+            shared.push({ id: msg.id, senderId: msg.senderId, senderName: msg.senderName, text: msg.text, media: msg.media, ts: msg.ts });
+            writeJSON('nexus_global', shared.slice(-100));
+        } else {
+            const key = 'nexus_inbox_' + targetId;
+            const inbox = readJSON(key, []);
+            inbox.push({ id: msg.id, senderId: msg.senderId, senderName: msg.senderName, text: msg.text, media: msg.media, ts: msg.ts });
+            writeJSON(key, inbox);
+        }
+    }
+
+    async function handleSendMessage(event) {
+        event.preventDefault();
+        if (sendingFile) return;
+        const input = $('message-input');
+        const text = input.value.trim();
+        const pending = state.pendingMedia;
+        if (!text && !pending) return;
+
+        let media = null;
+        if (pending) {
+            sendingFile = true;
+            showToast('Saving ' + pending.size + ' file…');
+            try {
+                const fileId = 'f_' + newId();
+                await putFile(fileId, pending.file);
+                media = { fileId, name: pending.name, size: pending.size, bytes: pending.bytes, type: pending.type, mime: pending.mime };
+            } catch (err) {
+                sendingFile = false;
+                showNotification('Could not save file', 'Your browser refused to store this file, most likely because there is not enough free disk space.');
+                return;
+            }
+            sendingFile = false;
         }
 
-        function clearContactSearch() {
-            const input = document.getElementById('contact-search');
-            input.value = '';
-            document.getElementById('clear-search-btn').classList.add('hidden');
-            renderContacts('');
+        deliver(state.activeContactId, {
+            id: newId(),
+            senderId: state.user.id,
+            senderName: state.user.name,
+            text,
+            media,
+            ts: Date.now()
+        });
+
+        input.value = '';
+        cancelMediaAttachment();
+        saveAppState();
+        renderMessages();
+        renderContacts($('contact-search').value);
+    }
+
+    function ensureContact(id, name) {
+        if (state.contacts.some(c => c.id === id)) return;
+        const reg = registeredUser(id);
+        state.contacts.push({ id, name: name || (reg && reg.name) || id, avatarBg: (reg && reg.avatarBg) || BG_COLORS[Math.floor(Math.random() * BG_COLORS.length)] });
+    }
+
+    function processInbox() {
+        if (!state.user) return;
+        const key = 'nexus_inbox_' + state.user.id;
+        const inbox = readJSON(key, []);
+        if (!inbox.length) return;
+        localStorage.removeItem(key);
+
+        let touchedActive = false;
+        inbox.forEach(m => {
+            ensureContact(m.senderId, m.senderName);
+            if (pushLocal(m.senderId, { ...m, reactions: [] })) {
+                if (state.activeContactId === m.senderId) touchedActive = true;
+                else {
+                    state.unread[m.senderId] = (state.unread[m.senderId] || 0) + 1;
+                    showToast('New message from ' + m.senderName);
+                }
+            }
+        });
+        saveAppState();
+        renderContacts($('contact-search').value);
+        if (touchedActive) renderMessages();
+    }
+
+    function syncGlobal(first = false) {
+        if (!state.user) return;
+        const shared = readJSON('nexus_global', []);
+        let changed = false, fromOthers = false;
+        if (!state.chats['global-chat'].some(m => m.id === 'g_welcome')) {
+            state.chats['global-chat'].push({ id: 'g_welcome', senderId: 'system', senderName: 'Network Broadcast', text: 'Welcome to Nexus Network! Messages here are visible to everyone using this browser. Add a contact by Network ID to chat privately.', ts: 0, reactions: ['🔥'] });
+        }
+        shared.forEach(m => {
+            if (state.deleted[m.id]) return;
+            if (pushLocal('global-chat', { ...m, reactions: [] })) {
+                changed = true;
+                if (m.senderId !== state.user.id) fromOthers = true;
+            }
+        });
+        if (!changed) { if (first) globalSeeded = true; return; }
+        if (!first && globalSeeded && fromOthers && state.activeContactId !== 'global-chat') {
+            state.unread['global-chat'] = (state.unread['global-chat'] || 0) + 1;
+        }
+        globalSeeded = true;
+        if (state.activeContactId === 'global-chat') renderMessages();
+        renderContacts($('contact-search') ? $('contact-search').value : '');
+    }
+
+    // ---------- Contacts ----------
+    function resolveContact(raw, customName) {
+        const input = raw.trim();
+        const users = readJSON('nexus_users', {});
+        const lower = input.toLowerCase();
+        let id = null;
+        if (users[lower]) id = lower;
+        else if (users['user_' + slug(input)]) id = 'user_' + slug(input);
+        else {
+            const byName = Object.values(users).find(u => u.name.toLowerCase() === lower);
+            if (byName) id = byName.id;
+        }
+        if (!id) id = lower.startsWith('user_') ? 'user_' + slug(lower.slice(5)) : 'user_' + slug(input);
+        const reg = users[id];
+        return { id, name: customName || (reg && reg.name) || input, avatarBg: (reg && reg.avatarBg) || BG_COLORS[Math.floor(Math.random() * BG_COLORS.length)] };
+    }
+
+    function addContactByInput(rawId, customName) {
+        if (!slug(rawId)) return;
+        const c = resolveContact(rawId, customName);
+        if (c.id === state.user.id) { showNotification('That is you', 'You cannot add yourself as a contact.'); return; }
+        if (!state.contacts.some(x => x.id === c.id)) state.contacts.push(c);
+        if (!state.chats[c.id]) state.chats[c.id] = [];
+        saveAppState();
+        clearContactSearch();
+        selectContact(c.id);
+    }
+
+    function addNewContact(event) {
+        event.preventDefault();
+        addContactByInput($('new-contact-id').value, $('new-contact-name').value.trim());
+        $('new-contact-id').value = ''; $('new-contact-name').value = '';
+        closeAddContactModal();
+    }
+    function addNewContactDirect(name) { addContactByInput(name, ''); }
+    function openAddContactModal() { $('add-contact-modal').classList.remove('hidden'); setTimeout(() => $('new-contact-id').focus(), 50); }
+    function closeAddContactModal() { $('add-contact-modal').classList.add('hidden'); }
+
+    function renderContacts(filter = '') {
+        const container = $('contacts-list');
+        if (!container) return;
+        container.innerHTML = '';
+        const f = (filter || '').trim().toLowerCase();
+
+        if (!f || 'global public channel'.includes(f)) {
+            const active = state.activeContactId === 'global-chat';
+            const unread = state.unread['global-chat'] || 0;
+            const g = document.createElement('div');
+            g.className = `flex items-center p-3 rounded-xl cursor-pointer transition select-none ${active ? 'bg-teal-600/20 border border-teal-500/30' : 'hover:bg-slate-800/40'}`;
+            g.onclick = () => selectContact('global-chat');
+            g.innerHTML = `
+                <div class="relative shrink-0"><div class="w-10 h-10 rounded-full flex items-center justify-center bg-teal-600 shadow">🌍</div>
+                <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span></div>
+                <div class="overflow-hidden flex-1 ml-3">
+                    <div class="flex justify-between items-center"><h4 class="font-semibold text-sm truncate text-slate-200">Global Public Channel</h4>
+                    ${unread ? `<span class="text-[10px] bg-teal-500 text-white rounded-full px-1.5 py-0.5 font-bold">${unread}</span>` : `<span class="text-[10px] text-emerald-400 font-medium">Online</span>`}</div>
+                    <p class="text-xs text-slate-400 truncate mt-0.5">Public network broadcast</p>
+                </div>`;
+            container.appendChild(g);
         }
 
-        function selectContact(contactId) {
-            state.activeContactId = contactId;
-            if (contactId === 'global-chat') {
-                document.getElementById('active-contact-name').innerText = 'Global Public Channel';
-                document.getElementById('active-contact-status').innerText = 'Online • Public broadcast network';
-                document.getElementById('active-contact-status').className = 'text-xs text-emerald-400';
-                document.getElementById('active-contact-avatar').innerText = '🌍';
-                document.getElementById('active-contact-avatar').className = 'w-10 h-10 rounded-full flex items-center justify-center font-bold text-white bg-teal-600 shadow';
-            } else {
-                const contact = state.contacts.find(c => c.id === contactId);
-                if (!contact) {
-                    state.activeContactId = 'global-chat';
-                    selectContact('global-chat');
+        const filtered = state.contacts.filter(c => c.name.toLowerCase().includes(f) || c.id.toLowerCase().includes(f));
+
+        if (filtered.length === 0 && f) {
+            const q = document.createElement('div');
+            q.className = 'p-3 rounded-xl bg-teal-600/10 border border-teal-500/30 text-center cursor-pointer hover:bg-teal-600/20 transition space-y-1';
+            q.onclick = () => addNewContactDirect(filter.trim());
+            q.innerHTML = `<p class="text-xs font-semibold text-teal-400"><i class="fa-solid fa-user-plus mr-1"></i> Add "${escapeHtml(filter.trim())}" as Contact</p>
+                           <p class="text-[10px] text-slate-400">Click to instantly create and start messaging</p>`;
+            container.appendChild(q);
+            return;
+        }
+
+        if (state.contacts.length === 0 && !f) {
+            const e = document.createElement('div');
+            e.className = 'p-6 text-center text-xs text-slate-400 flex flex-col items-center justify-center space-y-2';
+            e.innerHTML = `<div class="w-10 h-10 rounded-full bg-slate-800/80 flex items-center justify-center text-slate-400"><i class="fa-solid fa-address-book text-base"></i></div>
+                <p class="font-medium text-slate-300">No contacts yet</p><p class="text-[11px] text-slate-500">Click the + icon above to add a contact by Network ID</p>`;
+            container.appendChild(e);
+            return;
+        }
+
+        filtered.forEach(contact => {
+            const active = state.activeContactId === contact.id;
+            const list = state.chats[contact.id] || [];
+            const last = list.length ? list[list.length - 1] : null;
+            const online = isOnline(contact.id);
+            const unread = state.unread[contact.id] || 0;
+            const div = document.createElement('div');
+            div.className = `flex items-center p-3 rounded-xl transition select-none ${active ? 'bg-teal-600/20 border border-teal-500/30' : 'hover:bg-slate-800/40'}`;
+            div.oncontextmenu = (e) => { e.preventDefault(); openContactContextMenu(e, contact.id); };
+            div.innerHTML = `
+                <div class="relative shrink-0">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${contact.avatarBg || 'bg-indigo-600'}">${escapeHtml(contact.name.charAt(0).toUpperCase())}</div>
+                    <span class="absolute bottom-0 right-0 w-3 h-3 ${online ? 'bg-emerald-500' : 'bg-slate-500'} border-2 border-slate-900 rounded-full"></span>
+                </div>
+                <div class="overflow-hidden flex-1 cursor-pointer ml-3" data-select="${contact.id}">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-semibold text-sm truncate text-slate-200">${escapeHtml(contact.name)}</h4>
+                        ${unread ? `<span class="text-[10px] bg-teal-500 text-white rounded-full px-1.5 py-0.5 font-bold">${unread}</span>` : `<span class="text-[10px] ${online ? 'text-emerald-400' : 'text-slate-500'} font-medium">${online ? 'Online' : 'Offline'}</span>`}
+                    </div>
+                    <p class="text-xs text-slate-400 truncate mt-0.5">${last ? escapeHtml(last.text || 'Media attachment') : 'No messages yet'}</p>
+                </div>
+                <button type="button" data-menu="${contact.id}" class="p-2 text-slate-400 hover:text-white rounded-lg transition shrink-0" title="Contact Options"><i class="fa-solid fa-ellipsis-vertical text-xs"></i></button>`;
+            div.querySelector('[data-select]').onclick = () => selectContact(contact.id);
+            div.querySelector('[data-menu]').onclick = (e) => { e.stopPropagation(); openContactContextMenu(e, contact.id); };
+            container.appendChild(div);
+        });
+    }
+
+    function filterContacts() {
+        const input = $('contact-search');
+        $('clear-search-btn').classList.toggle('hidden', input.value.trim().length === 0);
+        renderContacts(input.value);
+    }
+    function clearContactSearch() {
+        $('contact-search').value = '';
+        $('clear-search-btn').classList.add('hidden');
+        renderContacts('');
+    }
+
+    function refreshActiveHeader() {
+        if (state.activeContactId === 'global-chat') return;
+        const c = state.contacts.find(x => x.id === state.activeContactId);
+        if (!c) return;
+        const online = isOnline(c.id);
+        $('active-contact-status').innerText = online ? 'Online • Secure Connection' : 'Offline • Messages are delivered when they sign in';
+        $('active-contact-status').className = online ? 'text-xs text-emerald-400' : 'text-xs text-slate-400';
+        $('active-status-indicator').className = `absolute bottom-0 right-0 w-3 h-3 ${online ? 'bg-emerald-500' : 'bg-slate-500'} border-2 border-slate-900 rounded-full`;
+    }
+
+    function selectContact(contactId) {
+        state.activeContactId = contactId;
+        state.unread[contactId] = 0;
+        const avatar = $('active-contact-avatar');
+        if (contactId === 'global-chat') {
+            $('active-contact-name').innerText = 'Global Public Channel';
+            $('active-contact-status').innerText = 'Online • Public broadcast network';
+            $('active-contact-status').className = 'text-xs text-emerald-400';
+            avatar.innerText = '🌍';
+            avatar.className = 'w-10 h-10 rounded-full flex items-center justify-center font-bold text-white bg-teal-600 shadow';
+            $('active-status-indicator').className = 'absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full';
+        } else {
+            const c = state.contacts.find(x => x.id === contactId);
+            if (!c) { selectContact('global-chat'); return; }
+            $('active-contact-name').innerText = c.name;
+            avatar.innerText = c.name.charAt(0).toUpperCase();
+            avatar.className = `w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow ${c.avatarBg || 'bg-indigo-600'}`;
+            refreshActiveHeader();
+        }
+        saveAppState();
+        renderMessages();
+        renderContacts($('contact-search').value);
+        if (window.innerWidth < 768) {
+            const sb = $('sidebar');
+            if (!sb.classList.contains('-translate-x-full')) toggleSidebar();
+        }
+    }
+
+    // ---------- Rendering messages ----------
+    function findMessage(id, chatId = state.activeContactId) {
+        return (state.chats[chatId] || []).find(m => m.id === id);
+    }
+
+    function renderMessages() {
+        const container = $('messages-container');
+        if (!container) return;
+        const wasNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 120;
+        container.innerHTML = '';
+        const messages = (state.chats[state.activeContactId] || []).filter(m => !state.deleted[m.id]);
+
+        if (messages.length === 0) {
+            container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-slate-500"><p class="text-sm font-medium">No messages yet. Send a message to start!</p></div>`;
+            return;
+        }
+
+        messages.forEach(msg => {
+            const isMe = msg.senderId === state.user.id;
+            const isGlobal = state.activeContactId === 'global-chat';
+            let mediaHTML = '';
+            if (msg.media) {
+                const mt = msg.media.type;
+                const srcAttr = msg.media.fileId ? `data-fid="${escapeHtml(msg.media.fileId)}"` : `src="${msg.media.data}"`;
+                if (mt === 'image') {
+                    mediaHTML = `<div data-open="image" class="mb-2 cursor-pointer overflow-hidden rounded-xl border border-slate-700/50 bg-slate-800/50 min-h-[60px]"><img ${srcAttr} class="max-h-60 w-full object-cover"></div>`;
+                } else if (mt === 'video') {
+                    mediaHTML = `<video controls preload="metadata" ${srcAttr} class="mb-2 max-h-60 w-full rounded-xl"></video>`;
+                } else if (mt === 'audio') {
+                    mediaHTML = `<audio controls preload="metadata" ${srcAttr} class="mb-2 w-full"></audio>`;
+                } else {
+                    mediaHTML = `<div data-open="file" class="flex items-center space-x-3 p-3 mb-2 bg-slate-800/80 rounded-xl border border-slate-700/50 cursor-pointer hover:bg-slate-700/80 transition"><i class="fa-solid fa-file-lines text-teal-400 text-xl"></i><div class="overflow-hidden text-left"><p class="text-xs font-semibold text-slate-200 truncate">${escapeHtml(msg.media.name)}</p><p class="text-[10px] text-slate-400">${escapeHtml(msg.media.size)}</p></div></div>`;
+                }
+            }
+            const reactionsHTML = (msg.reactions && msg.reactions.length)
+                ? `<div class="flex flex-wrap gap-1 mt-1.5">${msg.reactions.map(r => `<span class="px-2 py-0.5 rounded-full text-xs bg-slate-800/80 border border-slate-700/60">${r}</span>`).join('')}</div>` : '';
+            const sys = msg.senderId === 'system';
+
+            const div = document.createElement('div');
+            div.className = `flex ${isMe ? 'justify-end' : 'justify-start'} mb-3`;
+            div.dataset.mid = msg.id;
+            div.innerHTML = `
+                <div class="max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-3 text-sm ${isMe ? 'bg-teal-600 text-white rounded-br-none shadow-lg' : 'glass-panel text-slate-200 rounded-bl-none'}">
+                    ${!isMe && isGlobal ? `<span class="block text-[11px] font-semibold text-teal-400 mb-1">${escapeHtml(msg.senderName || 'User')}</span>` : ''}
+                    ${mediaHTML}
+                    ${msg.text ? `<p class="break-words leading-relaxed msg-text">${escapeHtml(msg.text)}</p>` : ''}
+                    ${reactionsHTML}
+                    ${sys ? '' : `<span class="block text-[10px] ${isMe ? 'text-teal-200' : 'text-slate-400'} text-right mt-1 font-mono">${fmtTime(msg.ts)}</span>`}
+                </div>`;
+            container.appendChild(div);
+        });
+        container.scrollTop = container.scrollHeight;
+        hydrateMedia(container);
+    }
+
+    function hydrateMedia(container) {
+        container.querySelectorAll('[data-fid]').forEach(async (el) => {
+            const url = await getFileURL(el.dataset.fid);
+            if (!url) {
+                const note = document.createElement('p');
+                note.className = 'text-[11px] text-slate-400 italic p-2';
+                note.textContent = 'File no longer available';
+                el.replaceWith(note);
+                return;
+            }
+            if (el.tagName === 'IMG') el.onload = () => { container.scrollTop = container.scrollHeight; };
+            el.src = url;
+        });
+    }
+
+    // Delegated events on message list
+    (function () {
+        const c = document.getElementById('messages-container');
+        c.addEventListener('contextmenu', (e) => {
+            const row = e.target.closest('[data-mid]');
+            e.preventDefault();
+            if (row) openMessageContextMenu(e, row.dataset.mid);
+        });
+        c.addEventListener('click', (e) => {
+            const open = e.target.closest('[data-open]');
+            const row = e.target.closest('[data-mid]');
+            if (!open || !row) return;
+            const msg = findMessage(row.dataset.mid);
+            if (!msg || !msg.media) return;
+            if (open.dataset.open === 'image') {
+                (msg.media.fileId ? getFileURL(msg.media.fileId) : Promise.resolve(msg.media.data)).then(u => { if (u) openLightbox(u); });
+            } else openFilePreview(msg.media);
+        });
+        let pressTimer = null;
+        c.addEventListener('touchstart', (e) => {
+            const row = e.target.closest('[data-mid]');
+            if (!row) return;
+            const t = e.touches[0];
+            pressTimer = setTimeout(() => openMessageContextMenu({ clientX: t.clientX, clientY: t.clientY, preventDefault() {} }, row.dataset.mid), 500);
+        }, { passive: true });
+        ['touchend', 'touchmove', 'touchcancel'].forEach(ev => c.addEventListener(ev, () => clearTimeout(pressTimer), { passive: true }));
+    })();
+
+    // ---------- Context menus ----------
+    function placeMenu(menu, x, y) {
+        menu.classList.remove('hidden');
+        const w = menu.offsetWidth, h = menu.offsetHeight;
+        menu.style.left = Math.max(8, Math.min(x, window.innerWidth - w - 8)) + 'px';
+        menu.style.top = Math.max(8, Math.min(y, window.innerHeight - h - 8)) + 'px';
+    }
+    function hideMenus() {
+        $('message-context-menu').classList.add('hidden');
+        $('contact-context-menu').classList.add('hidden');
+    }
+    function openMessageContextMenu(e, msgId) {
+        hideMenus();
+        ctxMessageId = msgId;
+        placeMenu($('message-context-menu'), e.clientX, e.clientY);
+    }
+    function openContactContextMenu(e, contactId) {
+        hideMenus();
+        ctxContactId = contactId;
+        const r = e.currentTarget && e.currentTarget.getBoundingClientRect ? null : null;
+        placeMenu($('contact-context-menu'), e.clientX, e.clientY);
+    }
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#message-context-menu') && !e.target.closest('#contact-context-menu')) hideMenus();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') { hideMenus(); closeLightbox(); closeFilePreviewModal(); closeForwardModal(); closeAddContactModal(); closeSettingsModal(); closeNotification(); }
+    });
+    window.addEventListener('resize', hideMenus);
+    document.getElementById('messages-container').addEventListener('scroll', hideMenus);
+
+    function addQuickReaction(emoji) {
+        const msg = findMessage(ctxMessageId);
+        if (msg) {
+            if (!msg.reactions) msg.reactions = [];
+            const i = msg.reactions.indexOf(emoji);
+            if (i >= 0) msg.reactions.splice(i, 1); else msg.reactions.push(emoji);
+            saveAppState();
+            renderMessages();
+        }
+        hideMenus();
+    }
+    function copyContextMenuText() {
+        const msg = findMessage(ctxMessageId);
+        hideMenus();
+        if (!msg || !msg.text) { showToast('Nothing to copy'); return; }
+        const done = () => showToast('Copied to clipboard');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(msg.text).then(done).catch(() => fallbackCopy(msg.text, done));
+        } else fallbackCopy(msg.text, done);
+    }
+    function fallbackCopy(text, cb) {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); cb(); } catch (e) { showToast('Copy failed'); }
+        document.body.removeChild(ta);
+    }
+    function deleteContextMessage() {
+        const id = ctxMessageId;
+        hideMenus();
+        if (!id) return;
+        state.deleted[id] = true;
+        state.chats[state.activeContactId] = (state.chats[state.activeContactId] || []).filter(m => m.id !== id);
+        saveAppState();
+        renderMessages();
+        renderContacts($('contact-search').value);
+    }
+
+    // Forward
+    function openForwardModal() {
+        const msg = findMessage(ctxMessageId);
+        hideMenus();
+        if (!msg) return;
+        const list = $('forward-targets-list');
+        list.innerHTML = '';
+        const targets = [{ id: 'global-chat', name: 'Global Public Channel', avatar: '🌍', bg: 'bg-teal-600' }]
+            .concat(state.contacts.map(c => ({ id: c.id, name: c.name, avatar: c.name.charAt(0).toUpperCase(), bg: c.avatarBg })));
+        targets.forEach(t => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'w-full flex items-center space-x-3 p-3 rounded-xl bg-slate-800/60 hover:bg-slate-700/60 transition text-left';
+            b.innerHTML = `<div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm ${t.bg || 'bg-indigo-600'}">${escapeHtml(t.avatar)}</div><span class="text-sm text-slate-200 truncate">${escapeHtml(t.name)}</span>`;
+            b.onclick = () => {
+                deliver(t.id, { id: newId(), senderId: state.user.id, senderName: state.user.name, text: msg.text, media: msg.media ? { ...msg.media } : null, ts: Date.now() });
+                saveAppState();
+                closeForwardModal();
+                showToast('Forwarded to ' + t.name);
+                renderContacts($('contact-search').value);
+                if (state.activeContactId === t.id) renderMessages();
+            };
+            list.appendChild(b);
+        });
+        $('forward-modal').classList.remove('hidden');
+    }
+    function closeForwardModal() { $('forward-modal').classList.add('hidden'); }
+
+    // Contact menu actions
+    function wipeChat(chatId) {
+        (state.chats[chatId] || []).forEach(m => { state.deleted[m.id] = true; });
+        state.chats[chatId] = [];
+        if (chatId === 'global-chat') state.chats[chatId] = [];
+        saveAppState();
+        if (state.activeContactId === chatId) renderMessages();
+        renderContacts($('contact-search').value);
+    }
+    function clearCurrentChat() {
+        if (!confirm('Clear all messages in this conversation (for you)?')) return;
+        wipeChat(state.activeContactId);
+    }
+    function contextActionClearChat() {
+        const id = ctxContactId; hideMenus();
+        if (id && confirm('Clear this conversation?')) wipeChat(id);
+    }
+    function contextActionDeleteContact() {
+        const id = ctxContactId; hideMenus();
+        if (!id || !confirm('Remove this contact and its conversation?')) return;
+        (state.chats[id] || []).forEach(m => { state.deleted[m.id] = true; });
+        state.contacts = state.contacts.filter(c => c.id !== id);
+        delete state.chats[id]; delete state.unread[id];
+        if (state.activeContactId === id) { saveAppState(); selectContact('global-chat'); return; }
+        saveAppState();
+        renderContacts($('contact-search').value);
+    }
+
+    // ---------- Attachments ----------
+    async function handleFileSelected(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        if (file.size > MAX_FILE_BYTES) {
+            showNotification('File too large', 'The maximum attachment size is 5 GB. This file is ' + fmtSize(file.size) + '.');
+            event.target.value = '';
+            return;
+        }
+        try {
+            if (navigator.storage && navigator.storage.estimate) {
+                const est = await navigator.storage.estimate();
+                if (est.quota && (est.quota - (est.usage || 0)) < file.size) {
+                    showNotification('Not enough storage', 'Your browser has about ' + fmtSize(Math.max(0, est.quota - (est.usage || 0))) + ' of storage left, which is less than this file (' + fmtSize(file.size) + ').');
+                    event.target.value = '';
                     return;
                 }
-                document.getElementById('active-contact-name').innerText = contact.name;
-                document.getElementById('active-contact-status').innerText = contact.isOnline ? 'Online • Secure Connection' : 'Offline • End-to-end encrypted';
-                document.getElementById('active-contact-status').className = contact.isOnline ? 'text-xs text-emerald-400' : 'text-xs text-slate-400';
-                const avatar = document.getElementById('active-contact-avatar');
-                avatar.innerText = contact.name.charAt(0).toUpperCase();
-                avatar.className = `w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow ${contact.avatarBg || 'bg-indigo-600'}`;
             }
+        } catch (e) {}
 
-            renderMessages();
-            renderContacts(document.getElementById('contact-search')?.value || '');
-            if (window.innerWidth < 768) {
-                const sidebar = document.getElementById('sidebar');
-                if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
-                    toggleSidebar();
-                }
-            }
-        }
-
-        function renderMessages() {
-            const container = document.getElementById('messages-container');
-            if (!container) return;
-            container.innerHTML = '';
-
-            if (!state.chats[state.activeContactId]) {
-                state.chats[state.activeContactId] = [];
-            }
-
-            const messages = state.chats[state.activeContactId];
-            if (messages.length === 0) {
-                container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-slate-500 space-y-2"><p class="text-sm font-medium">No messages yet. Send a message to start!</p></div>`;
-                return;
-            }
-
-            messages.forEach(msg => {
-                const isMe = msg.sender === 'user' || msg.senderId === state.user?.id;
-                const div = document.createElement('div');
-                div.className = `flex ${isMe ? 'justify-end' : 'justify-start'} mb-3 select-none`;
-                div.oncontextmenu = (e) => openMessageContextMenu(e, msg.id);
-
-                let mediaHTML = '';
-                if (msg.media) {
-                    if (msg.media.type === 'image') {
-                        mediaHTML = `<div class="mb-2 cursor-pointer overflow-hidden rounded-xl border border-slate-700/50" onclick="openLightbox('${msg.media.data}')"><img src="${msg.media.data}" class="max-h-60 w-full object-cover"></div>`;
-                    } else {
-                        const safeName = escapeHtml(msg.media.name).replace(/'/g, "\\'");
-                        mediaHTML = `<div onclick="openFilePreview('${msg.media.data}', '${safeName}', '${msg.media.type}', '${msg.media.size}')" class="flex items-center space-x-3 p-3 mb-2 bg-slate-800/80 rounded-xl border border-slate-700/50 cursor-pointer hover:bg-slate-700/80 transition"><i class="fa-solid fa-file-lines text-teal-400 text-xl"></i><div class="overflow-hidden text-left"><p class="text-xs font-semibold text-slate-200 truncate">${escapeHtml(msg.media.name)}</p><p class="text-[10px] text-slate-400">${msg.media.size}</p></div></div>`;
-                    }
-                }
-
-                let reactionsHTML = '';
-                if (msg.reactions && msg.reactions.length > 0) {
-                    reactionsHTML = `<div class="flex flex-wrap gap-1 mt-1.5">${msg.reactions.map(r => `<span class="px-2 py-0.5 rounded-full text-xs bg-slate-800/80 border border-slate-700/60">${r}</span>`).join('')}</div>`;
-                }
-
-                div.innerHTML = `
-                    <div class="max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-3 text-sm ${isMe ? 'bg-teal-600 text-white rounded-br-none shadow-lg' : 'glass-panel text-slate-200 rounded-bl-none'}">
-                        ${!isMe && state.activeContactId === 'global-chat' ? `<span class="block text-[11px] font-semibold text-teal-400 mb-1">${escapeHtml(msg.senderName || 'User')}</span>` : ''}
-                        ${mediaHTML}
-                        ${msg.text ? `<p class="break-words leading-relaxed">${escapeHtml(msg.text)}</p>` : ''}
-                        ${reactionsHTML}
-                        <span class="block text-[10px] ${isMe ? 'text-teal-200' : 'text-slate-400'} text-right mt-1 font-mono">${msg.time}</span>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function openFilePreview(dataUrl, name, type, size) {
-            document.getElementById('preview-modal-filename').innerText = name;
-            document.getElementById('preview-modal-filesize').innerText = size;
-            
-            const downloadBtn = document.getElementById('file-preview-download-btn');
-            downloadBtn.href = dataUrl;
-            downloadBtn.download = name;
-
-            const iconEl = document.getElementById('preview-modal-icon');
-            const bodyEl = document.getElementById('file-preview-body');
-            bodyEl.innerHTML = '';
-
-            if (type === 'image') {
-                iconEl.className = 'fa-solid fa-image text-teal-400 text-2xl';
-                bodyEl.innerHTML = `<img src="${dataUrl}" class="max-h-[50vh] max-w-full rounded-lg object-contain">`;
-            } else if (name.endsWith('.txt') || name.endsWith('.json') || name.endsWith('.md') || name.endsWith('.js') || name.endsWith('.html')) {
-                iconEl.className = 'fa-solid fa-file-code text-teal-400 text-2xl';
-                try {
-                    const base64Content = dataUrl.split(',')[1];
-                    const decodedText = atob(base64Content);
-                    bodyEl.innerHTML = `<pre class="w-full h-full p-4 bg-slate-950/80 rounded-xl text-xs text-slate-300 font-mono overflow-auto whitespace-pre-wrap">${escapeHtml(decodedText)}</pre>`;
-                } catch(e) {
-                    bodyEl.innerHTML = `<p class="text-sm text-slate-400">Preview not available.</p>`;
-                }
-            } else {
-                iconEl.className = 'fa-solid fa-file-lines text-teal-400 text-2xl';
-                bodyEl.innerHTML = `<div class="text-center space-y-3"><i class="fa-solid fa-file-lines text-teal-400 text-5xl"></i><p class="text-sm text-slate-300">File ready for download.</p><p class="text-xs text-slate-500">${name} (${size})</p></div>`;
-            }
-
-            document.getElementById('file-preview-modal').classList.remove('hidden');
-        }
-
-        function closeFilePreviewModal() {
-            document.getElementById('file-preview-modal').classList.add('hidden');
-        }
-
-        function handleFileSelected(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                let fileType = 'document';
-                if (file.type.startsWith('image/')) fileType = 'image';
-
-                state.pendingMedia = {
-                    name: file.name,
-                    size: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
-                    type: fileType,
-                    data: e.target.result
-                };
-
-                const previewBar = document.getElementById('media-preview-bar');
-                document.getElementById('media-preview-filename').innerText = file.name;
-                document.getElementById('media-preview-filesize').innerText = state.pendingMedia.size;
-                previewBar.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function cancelMediaAttachment() {
-            state.pendingMedia = null;
-            document.getElementById('media-file-input').value = '';
-            document.getElementById('media-preview-bar').classList.add('hidden');
-        }
-
-        function handleSendMessage(event) {
-            event.preventDefault();
-            const input = document.getElementById('message-input');
-            const text = input.value.trim();
-            if (!text && !state.pendingMedia) return;
-
-            const msgId = 'msg_' + Date.now();
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            const newMsg = {
-                id: msgId,
-                sender: 'user',
-                senderId: state.user?.id || 'user_local',
-                senderName: state.user?.name || 'User',
-                receiverId: state.activeContactId,
-                text: text,
-                media: state.pendingMedia ? { ...state.pendingMedia } : null,
-                time: time,
-                reactions: []
-            };
-
-            if (!state.chats[state.activeContactId]) {
-                state.chats[state.activeContactId] = [];
-            }
-            state.chats[state.activeContactId].push(newMsg);
-
-            input.value = '';
-            cancelMediaAttachment();
-            saveAppState();
-            renderMessages();
-            renderContacts(document.getElementById('contact-search')?.value || '');
-        }
-
-        function addNewContactDirect(contactName) {
-            const name = contactName.trim();
-            if (!name) return;
-            const id = 'contact_' + name.toLowerCase().replace(/[^a-z0-9_]/g, '_');
-
-            if (!state.contacts.some(c => c.id === id)) {
-                const bgColors = ['bg-indigo-600', 'bg-pink-600', 'bg-teal-600', 'bg-amber-600', 'bg-purple-600'];
-                state.contacts.push({ 
-                    id, 
-                    name, 
-                    avatarBg: bgColors[Math.floor(Math.random() * bgColors.length)],
-                    isOnline: true
-                });
-            }
-
-            if (!state.chats[id]) {
-                state.chats[id] = [];
-            }
-
-            saveAppState();
-            document.getElementById('contact-search').value = '';
-            document.getElementById('clear-search-btn').classList.add('hidden');
-            renderContacts('');
-            selectContact(id);
-        }
-
-        function addNewContact(event) {
-            event.preventDefault();
-            const nameInput = document.getElementById('new-contact-name');
-            const idInput = document.getElementById('new-contact-id');
-            const name = nameInput.value.trim();
-            const id = 'contact_' + idInput.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
-
-            if (!name || !id) return;
-
-            if (!state.contacts.some(c => c.id === id)) {
-                const bgColors = ['bg-indigo-600', 'bg-pink-600', 'bg-teal-600', 'bg-amber-600', 'bg-purple-600'];
-                state.contacts.push({ 
-                    id, 
-                    name, 
-                    avatarBg: bgColors[Math.floor(Math.random() * bgColors.length)],
-                    isOnline: true
-                });
-            }
-
-            if (!state.chats[id]) {
-                state.chats[id] = [];
-            }
-
-            saveAppState();
-            renderContacts(document.getElementById('contact-search')?.value || '');
-            closeAddContactModal();
-            selectContact(id);
-        }
-
-        function openSettingsModal() { document.getElementById('settings-modal').classList.remove('hidden'); }
-        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
-
-        function updateUsername(val) {
-            if (!val.trim()) return;
-            state.user.name = val.trim();
-            document.getElementById('current-username').innerText = state.user.name;
-            document.getElementById('user-avatar').innerText = state.user.name.charAt(0).toUpperCase();
-            saveAppState();
-        }
-
-        function showNotification(title, message) {
-            document.getElementById('notification-title').innerText = title;
-            document.getElementById('notification-message').innerText = message;
-            document.getElementById('notification-modal').classList.remove('hidden');
-        }
-        function closeNotification() { document.getElementById('notification-modal').classList.add('hidden'); }
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('-translate-x-full');
-            document.getElementById('sidebar-backdrop').classList.toggle('hidden');
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-        }
-
-        window.onload = function() {
-            initIndexedDB(() => {
-                loadAppState();
-            });
+        let type = 'document';
+        if (file.type.startsWith('image/')) type = 'image';
+        else if (file.type.startsWith('video/')) type = 'video';
+        else if (file.type.startsWith('audio/')) type = 'audio';
+        if (state.pendingMedia && state.pendingMedia.thumbUrl) URL.revokeObjectURL(state.pendingMedia.thumbUrl);
+        state.pendingMedia = {
+            file, name: file.name, size: fmtSize(file.size), bytes: file.size, type, mime: file.type || 'application/octet-stream',
+            thumbUrl: type === 'image' ? URL.createObjectURL(file) : null
         };
+        const bar = $('media-preview-bar');
+        $('media-preview-filename').innerText = file.name;
+        $('media-preview-filesize').innerText = state.pendingMedia.size;
+        $('media-preview-thumbnail').innerHTML = state.pendingMedia.thumbUrl
+            ? `<img src="${state.pendingMedia.thumbUrl}" class="w-full h-full object-cover">`
+            : `<i class="fa-solid fa-file"></i>`;
+        bar.classList.remove('hidden'); bar.classList.add('flex');
+    }
+    function cancelMediaAttachment() {
+        if (state.pendingMedia && state.pendingMedia.thumbUrl) URL.revokeObjectURL(state.pendingMedia.thumbUrl);
+        state.pendingMedia = null;
+        $('media-file-input').value = '';
+        const bar = $('media-preview-bar');
+        bar.classList.add('hidden'); bar.classList.remove('flex');
+    }
+
+    function openLightbox(src) { $('lightbox-img').src = src; $('media-lightbox-modal').classList.remove('hidden'); }
+    function closeLightbox() { $('media-lightbox-modal').classList.add('hidden'); $('lightbox-img').src = ''; }
+
+    async function openFilePreview(media) {
+        $('preview-modal-filename').innerText = media.name;
+        $('preview-modal-filesize').innerText = media.size;
+        const dl = $('file-preview-download-btn');
+        const body = $('file-preview-body');
+        body.innerHTML = `<p class="text-sm text-slate-400">Loading…</p>`;
+        $('file-preview-modal').classList.remove('hidden');
+
+        let url = media.data || null, blob = null;
+        if (media.fileId) {
+            url = await getFileURL(media.fileId);
+            if (url) blob = await getFileBlob(media.fileId);
+        }
+        if (!url) { body.innerHTML = `<p class="text-sm text-slate-400">File no longer available.</p>`; dl.removeAttribute('href'); return; }
+        dl.href = url; dl.download = media.name;
+
+        const name = (media.name || '').toLowerCase();
+        if (blob && /\.(txt|json|md|js|html|csv|css|log)$/.test(name) && blob.size < 2 * 1024 * 1024) {
+            const text = await blob.text();
+            body.innerHTML = `<pre class="w-full h-full p-4 bg-slate-950/80 rounded-xl text-xs text-slate-300 font-mono overflow-auto whitespace-pre-wrap">${escapeHtml(text)}</pre>`;
+        } else if (blob && media.mime === 'application/pdf') {
+            body.innerHTML = `<iframe src="${url}" class="w-full h-[50vh] rounded-lg bg-white"></iframe>`;
+        } else {
+            body.innerHTML = `<div class="text-center space-y-3"><i class="fa-solid fa-file-lines text-teal-400 text-5xl"></i><p class="text-sm text-slate-300">File ready for download.</p><p class="text-xs text-slate-500">${escapeHtml(media.name)} (${escapeHtml(media.size)})</p></div>`;
+        }
+    }
+    function closeFilePreviewModal() { $('file-preview-modal').classList.add('hidden'); }
+
+    // ---------- Settings / sidebar ----------
+    async function openSettingsModal() {
+        $('settings-modal').classList.remove('hidden');
+        const el = $('settings-storage');
+        try {
+            const est = await navigator.storage.estimate();
+            const persisted = navigator.storage.persisted ? await navigator.storage.persisted() : false;
+            el.innerText = 'Browser storage used: ' + fmtSize(est.usage || 0) + ' of about ' + fmtSize(est.quota || 0) + (persisted ? ' (protected from auto-cleanup)' : '');
+        } catch (e) { el.innerText = ''; }
+    }
+    function closeSettingsModal() { $('settings-modal').classList.add('hidden'); }
+    function updateUsername(val) {
+        const v = val.trim();
+        if (!v) return;
+        state.user.name = v;
+        const users = readJSON('nexus_users', {});
+        if (users[state.user.id]) { users[state.user.id].name = v; writeJSON('nexus_users', users); }
+        $('current-username').innerText = v;
+        $('user-avatar').innerText = v.charAt(0).toUpperCase();
+        saveAppState();
+    }
+    function toggleSidebar() {
+        $('sidebar').classList.toggle('-translate-x-full');
+        $('sidebar-backdrop').classList.toggle('hidden');
+    }
+
+    // ---------- Boot ----------
+    window.addEventListener('load', () => {
+        const id = sessionStorage.getItem('nexus_session_user');
+        const rec = id ? readJSON('nexus_users', {})[id] : null;
+        if (rec) startSession(rec);
+    });
     </script>
 </body>
 </html>
